@@ -22,13 +22,20 @@ try
     var services = builder.Services;
     var configuration = builder.Configuration;
 
-    services.AddDbContext<AppDbContext>(options => { options.UseSqlServer(configuration.GetConnectionString("dev")); });
+    services.AddDbContext<AppDbContext>(options =>
+    {
+        options.UseSqlServer(configuration.GetConnectionString("dev"));
+        options.EnableSensitiveDataLogging();
+    });
+
+    services.AddSession();
+    services.AddMemoryCache();
+
+    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.AddTransient<IAuthService, AuthService>();
 
     services.AddRazorPages();
-    services.AddSession();
-    services.AddMemoryCache();
 
     var app = builder.Build();
     app.UseSerilogRequestLogging();
@@ -41,6 +48,8 @@ try
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+
+    app.UseSession();
 
     app.UseRouting();
 

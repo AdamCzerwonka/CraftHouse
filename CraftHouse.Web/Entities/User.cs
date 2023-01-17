@@ -14,7 +14,7 @@ public class User : EntityBase
     public string LastName { get; set; } = null!;
 
     [Required]
-    public int TelephoneNumber { get; set; }
+    public string TelephoneNumber { get; set; } = null!;
 
     [Required]
     public string City { get; set; } = null!;

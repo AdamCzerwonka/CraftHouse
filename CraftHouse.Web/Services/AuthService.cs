@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
@@ -9,19 +10,23 @@ namespace CraftHouse.Web.Services;
 class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<AuthService> _logger;
     private readonly ISession _session;
 
-    public AuthService(AppDbContext context, ISession session)
+    public AuthService(AppDbContext context, IServiceProvider services, ILogger<AuthService> logger)
     {
         _context = context;
-        _session = session;
+        _logger = logger;
+        _session = services.GetRequiredService<IHttpContextAccessor>().HttpContext!.Session;
     }
-    
+
 
     public async Task RegisterUser(User user, string password)
     {
+        _logger.LogInformation("HASHING STARTED");
         //TODO: validate user
-        
+        var stopwatch = Stopwatch.StartNew();
+
         var salt = CreateSalt();
         var hash = HashPassword(password, salt);
 
@@ -30,6 +35,10 @@ class AuthService : IAuthService
 
         user.PasswordHash = hashB64;
         user.PasswordSalt = saltB64;
+        stopwatch.Stop();
+        _logger.LogInformation("HASHING ENDED");
+
+        _logger.LogInformation("Hashing took: {time}", stopwatch.ElapsedMilliseconds);
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -50,7 +59,7 @@ class AuthService : IAuthService
         {
             return false;
         }
-        
+
         _session.SetInt32("UserId", user.Id);
         return true;
     }
