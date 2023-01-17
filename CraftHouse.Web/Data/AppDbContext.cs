@@ -9,5 +9,5 @@ public class AppDbContext : DbContext
     {
     }
 
-    private DbSet<User> Users => Set<User>();
+    public DbSet<User> Users => Set<User>();
 }
