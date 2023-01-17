@@ -1,25 +1,55 @@
-var builder = WebApplication.CreateBuilder(args);
+using CraftHouse.Web.Data;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+try
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    var builder = WebApplication.CreateBuilder(args);
+    builder.Host.UseSerilog((context, services, configuration) =>
+    {
+        configuration.ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services);
+    } );
+
+    var services = builder.Services;
+    var configuration = builder.Configuration;
+
+    services.AddDbContext<AppDbContext>(options => { options.UseSqlServer(configuration.GetConnectionString("dev")); });
+
+    services.AddRazorPages();
+
+    var app = builder.Build();
+    app.UseSerilogRequestLogging();
+
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Error");
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseAuthorization();
+
+    app.MapRazorPages();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated!");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
