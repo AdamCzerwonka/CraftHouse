@@ -24,4 +24,10 @@ public class User : EntityBase
 
     [Required]
     public string AddressLine { get; set; } = null!;
+    
+    [Required]
+    public string MailAddress { get; set; } = null!;
+    
+    [Required]
+    public string Password { get; set; } = null!;
 }
