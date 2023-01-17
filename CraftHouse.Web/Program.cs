@@ -1,4 +1,5 @@
 using CraftHouse.Web.Data;
+using CraftHouse.Web.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -16,14 +17,18 @@ try
     {
         configuration.ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services);
-    } );
+    });
 
     var services = builder.Services;
     var configuration = builder.Configuration;
 
     services.AddDbContext<AppDbContext>(options => { options.UseSqlServer(configuration.GetConnectionString("dev")); });
 
+    services.AddTransient<IAuthService, AuthService>();
+
     services.AddRazorPages();
+    services.AddSession();
+    services.AddMemoryCache();
 
     var app = builder.Build();
     app.UseSerilogRequestLogging();
