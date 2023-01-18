@@ -10,22 +10,26 @@ namespace CraftHouse.Web.Services;
 class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AuthService> _logger;
-    private readonly ISession _session;
 
-    public AuthService(AppDbContext context, IServiceProvider services, ILogger<AuthService> logger)
+    public AuthService(AppDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<AuthService> logger)
     {
         _context = context;
+        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
-        _session = services.GetRequiredService<IHttpContextAccessor>().HttpContext!.Session;
     }
 
 
     public async Task RegisterUser(User user, string password)
     {
-        _logger.LogInformation("HASHING STARTED");
-        //TODO: validate user
-        var stopwatch = Stopwatch.StartNew();
+        //TODO: Validate User
+            
+        var userInDb = _context.Users.FirstOrDefault(x => x.Email == user.Email);
+        if (userInDb is not null)
+        {
+            throw new InvalidOperationException("User with given email already exists in db");
+        }
 
         var salt = CreateSalt();
         var hash = HashPassword(password, salt);
@@ -35,10 +39,6 @@ class AuthService : IAuthService
 
         user.PasswordHash = hashB64;
         user.PasswordSalt = saltB64;
-        stopwatch.Stop();
-        _logger.LogInformation("HASHING ENDED");
-
-        _logger.LogInformation("Hashing took: {time}", stopwatch.ElapsedMilliseconds);
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -60,8 +60,21 @@ class AuthService : IAuthService
             return false;
         }
 
-        _session.SetInt32("UserId", user.Id);
+        _httpContextAccessor.HttpContext!.Session.SetInt32("userID", user.Id);
+
         return true;
+    }
+
+    public bool IsLoggedIn()
+    {
+        var userId = _httpContextAccessor.HttpContext!.Session.GetInt32("userID");
+        return userId != null;
+    }
+
+    public User? GetLoggedInUser()
+    {
+        var userId = _httpContextAccessor.HttpContext!.Session.GetInt32("userID");
+        return userId is null ? null : _context.Users.FirstOrDefault(x => x.Id == userId);
     }
 
     private byte[] CreateSalt()
