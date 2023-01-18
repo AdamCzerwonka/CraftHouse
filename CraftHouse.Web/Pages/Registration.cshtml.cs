@@ -46,7 +46,7 @@ public class Registration : PageModel
     {
     }
 
-    public async Task OnPostAsync()
+    public async Task<IActionResult> OnPostAsync()
     {
         var user = new User()
         {
@@ -60,5 +60,7 @@ public class Registration : PageModel
         };
 
         await _authService.RegisterUser(user, Password);
+
+        return RedirectToPage("index");
     }
 }
