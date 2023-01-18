@@ -65,6 +65,18 @@ class AuthService : IAuthService
         return true;
     }
 
+    public bool IsLoggedIn()
+    {
+        var userId = _httpContextAccessor.HttpContext!.Session.GetInt32("userID");
+        return userId != null;
+    }
+
+    public User? GetLoggedInUser()
+    {
+        var userId = _httpContextAccessor.HttpContext!.Session.GetInt32("userID");
+        return userId is null ? null : _context.Users.FirstOrDefault(x => x.Id == userId);
+    }
+
     private byte[] CreateSalt()
     {
         var buff = RandomNumberGenerator.GetBytes(16);
