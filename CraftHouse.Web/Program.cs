@@ -28,7 +28,10 @@ try
         options.EnableSensitiveDataLogging();
     });
 
-    services.AddSession();
+    services.AddSession(options =>
+    {
+        options.Cookie.Name = "SessionID";
+    } );
     services.AddMemoryCache();
 
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
