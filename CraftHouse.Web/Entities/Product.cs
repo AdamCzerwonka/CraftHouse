@@ -24,6 +24,7 @@ public class Product:EntityBase
 
     public Category Category { get; set; }
 
+    public ICollection<Option> Options { get; set; }
 
     /*
     [Required]
