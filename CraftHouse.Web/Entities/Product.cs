@@ -2,7 +2,7 @@
 
 namespace CraftHouse.Web.Entities;
 
-public class Product
+public class Product:EntityBase
 {
     [Key]
     public int Id { get; set; }
@@ -16,7 +16,15 @@ public class Product
     [Required]
     public float Price { get; set; }
 
-    
+    [Required]
+    public string Description { get; set; } = null!;
+
+    [Required]
+    public int CategoryId { get; set; }
+
+    public Category Category { get; set; }
+
+
     /*
     [Required]
     public string MeatType { get; set; } = null!;
