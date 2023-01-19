@@ -1,6 +1,8 @@
-﻿using CraftHouse.Web.Services;
+﻿using CraftHouse.Web.Entities;
+using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Serilog;
 
 namespace CraftHouse.Web.Pages;
 
@@ -15,14 +17,10 @@ public class IndexModel : PageModel
         _authService = authService;
     }
 
-    public string UserId { get; set; } = null!;
+    public User? LoggedInUser { get; set; }
 
     public void OnGet()
     {
-        var user = _authService.GetLoggedInUser();
-        if(user is not null)
-        {
-            UserId = user.Id.ToString();
-        }
+        LoggedInUser = _authService.GetLoggedInUser();
     }
 }

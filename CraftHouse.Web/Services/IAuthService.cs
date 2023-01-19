@@ -9,4 +9,5 @@ public interface IAuthService
     bool Login(User user, string password);
     bool IsLoggedIn();
     User? GetLoggedInUser();
+    void Logout();
 }

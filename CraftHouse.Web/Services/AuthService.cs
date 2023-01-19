@@ -96,6 +96,11 @@ public class AuthService : IAuthService
         return userId is null ? null : _context.Users.FirstOrDefault(x => x.Id == userId);
     }
 
+    public void Logout()
+    {
+        _httpContextAccessor.HttpContext!.Session.Clear();
+    }
+
     private byte[] CreateSalt()
     {
         var buff = RandomNumberGenerator.GetBytes(16);
