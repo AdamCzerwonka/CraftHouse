@@ -62,6 +62,10 @@ try
 
     app.Run();
 }
+catch (HostAbortedException)
+{
+   // It handles exception thrown while doing `dotnet ef` related actions 
+}
 catch (Exception ex)
 {
     Log.Fatal(ex, "Application terminated!");
