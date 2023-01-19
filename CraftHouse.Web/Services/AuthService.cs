@@ -3,28 +3,45 @@ using System.Security.Cryptography;
 using System.Text;
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
+using FluentValidation;
 using Konscious.Security.Cryptography;
 
 namespace CraftHouse.Web.Services;
 
-class AuthService : IAuthService
+public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AuthService> _logger;
+    private readonly IValidator<User> _validator;
 
-    public AuthService(AppDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<AuthService> logger)
+    public AuthService(AppDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<AuthService> logger,
+        IValidator<User> validator)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
+        _validator = validator;
     }
 
 
-    public async Task RegisterUser(User user, string password)
+    public async Task<AuthResult> RegisterUser(User user, string password)
     {
-        //TODO: Validate User
-            
+        var result = await _validator.ValidateAsync(user);
+        if (!result.IsValid)
+        {
+            var errors = new List<string>();
+            foreach (var validationFailure in result.Errors)
+            {
+                errors.Add(validationFailure.ErrorMessage);
+                _logger.LogWarning("Validation error: {@Error}", validationFailure.ErrorMessage);
+            }
+
+
+
+            return new AuthResult() { Succeeded = false, Errors = errors };
+        }
+
         var userInDb = _context.Users.FirstOrDefault(x => x.Email == user.Email);
         if (userInDb is not null)
         {
@@ -42,6 +59,8 @@ class AuthService : IAuthService
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
+
+        return new AuthResult() { Succeeded = true };
     }
 
     public bool VerifyUserPassword(User user, string password)
@@ -77,6 +96,11 @@ class AuthService : IAuthService
         return userId is null ? null : _context.Users.FirstOrDefault(x => x.Id == userId);
     }
 
+    public void Logout()
+    {
+        _httpContextAccessor.HttpContext!.Session.Clear();
+    }
+
     private byte[] CreateSalt()
     {
         var buff = RandomNumberGenerator.GetBytes(16);
@@ -100,4 +124,10 @@ class AuthService : IAuthService
         var newHash = HashPassword(password, salt);
         return hash.SequenceEqual(newHash);
     }
+}
+
+public class AuthResult
+{
+    public bool Succeeded { get; set; }
+    public List<string> Errors { get; set; } = null!;
 }

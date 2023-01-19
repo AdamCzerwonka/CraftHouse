@@ -1,34 +1,52 @@
 ﻿@page
 @model CraftHouse.Web.Pages.Registration
 
+@if (Model.ValidationErrors != null)
+{
+    @foreach (var error in Model.ValidationErrors)
+    {
+        <p>@error</p>
+    } 
+}
+
 <form method="post">
-    <label for="firstName">First Name</label>
-    <input type="text" id="firstName" asp-for="FirstName"/>
-    
-    <label for="lastName">Last Name</label>
-    <input type="text" id="lastName" asp-for="LastName"/>
-    
-    <label for="telephoneNumber">Telephone number</label>
-    <input type="number" id="telephoneNumber" asp-for="TelephoneNumber"/>
-    
-    <label for="city">City</label>
-    <input type="text" id="city" asp-for="City"/>
-    
-    <label for="postalCode">Postal code</label>
-    <input type="text" id="postalCode" asp-for="PostalCode"/>
-    
-    <label for="addressLine">Address</label>
-    <input type="text" id="addressLine" asp-for="AddressLine"/>
-    
-    <label for="email">E-mail address</label>
-    <input type="text" id="email" asp-for="Mail"/>
-    
-    <label for="password">Password</label>
-    <input type="text" id="password" asp-for="Password"/>
-    
-    <label for="confirmPassword">Confirm password</label>
-    <input type="text" id="confirmPassword" asp-for="ConfirmPassword"/>
-    
+    <div>
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" asp-for="UserRegister.FirstName"/>
+    </div>
+    <div>
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" asp-for="UserRegister.LastName"/>
+    </div>
+    <div>
+        <label for="telephoneNumber">Telephone number</label>
+        <input type="number" id="telephoneNumber" asp-for="UserRegister.TelephoneNumber"/>
+    </div>
+
+    <div>
+        <label for="city">City</label>
+        <input type="text" id="city" asp-for="UserRegister.City"/>
+    </div>
+    <div>
+        <label for="postalCode">Postal code</label>
+        <input type="text" id="postalCode" asp-for="UserRegister.PostalCode"/>
+    </div>
+    <div>
+        <label for="addressLine">Address</label>
+        <input type="text" id="addressLine" asp-for="UserRegister.AddressLine"/>
+    </div>
+    <div>
+        <label for="email">E-mail address</label>
+        <input type="text" id="email" asp-for="UserRegister.Mail"/>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="text" id="password" asp-for="UserRegister.Password"/>
+    </div>
+    <div>
+        <label for="confirmPassword">Confirm password</label>
+        <input type="text" id="confirmPassword" asp-for="UserRegister.ConfirmPassword"/>
+    </div>
+
     <input type="submit" value="Register"/>
-    
 </form>

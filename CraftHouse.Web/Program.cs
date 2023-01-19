@@ -1,5 +1,7 @@
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Services;
+using CraftHouse.Web.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -28,15 +30,13 @@ try
         options.EnableSensitiveDataLogging();
     });
 
-    services.AddSession(options =>
-    {
-        options.Cookie.Name = "SessionID";
-    } );
+    services.AddSession(options => { options.Cookie.Name = "SessionID"; });
     services.AddMemoryCache();
 
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.AddTransient<IAuthService, AuthService>();
+    services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
     services.AddRazorPages();
 

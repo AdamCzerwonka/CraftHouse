@@ -19,7 +19,10 @@
         </li>
 </ul>
 
-<p>@Model.UserId</p>
+@if (Model.LoggedInUser is not null)
+{
+    <p>Hello, @Model.LoggedInUser!.FirstName</p>
+}
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
