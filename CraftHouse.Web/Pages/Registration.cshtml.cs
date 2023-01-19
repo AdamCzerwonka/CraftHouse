@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CraftHouse.Web.Entities;
+﻿using CraftHouse.Web.Entities;
 using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,28 +18,30 @@ public class Registration : PageModel
     public string FirstName { get; set; } = null!;
 
     [BindProperty]
-    public string LastName { get; set; }
+    public string LastName { get; set; } = null!;
 
     [BindProperty]
-    public string TelephoneNumber { get; set; }
+    public string TelephoneNumber { get; set; } = null!;
 
     [BindProperty]
-    public string City { get; set; }
+    public string City { get; set; } = null!;
 
     [BindProperty]
-    public string PostalCode { get; set; }
+    public string PostalCode { get; set; } = null!;
 
     [BindProperty]
-    public string AddressLine { get; set; }
+    public string AddressLine { get; set; } = null!;
 
     [BindProperty]
-    public string Mail { get; set; }
+    public string Mail { get; set; } = null!;
 
     [BindProperty]
-    public string Password { get; set; }
+    public string Password { get; set; } = null!;
 
     [BindProperty]
-    public string ConfirmPassword { get; set; }
+    public string ConfirmPassword { get; set; } = null!;
+
+    public List<string>? ValidationErrors { get; set; }
 
     public void OnGet()
     {
@@ -59,7 +60,12 @@ public class Registration : PageModel
             Email = Mail
         };
 
-        await _authService.RegisterUser(user, Password);
+       var result =  await _authService.RegisterUser(user, Password);
+       if (!result.Succeeded)
+       {
+           ValidationErrors = result.Errors;
+           return Page();
+       }
 
         return RedirectToPage("index");
     }
