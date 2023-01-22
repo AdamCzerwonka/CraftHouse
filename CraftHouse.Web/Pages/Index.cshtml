@@ -5,24 +5,44 @@
 }
 
 <ul>
-    <li>
-        <a asp-page="Registration">Register</a>
-    </li>
-    <li>
-        <a asp-page="LogIn">Login</a>
-    </li>
+    @if (Model.LoggedInUser != null)
+    {
+        <li>
+            <a asp-page="Logout">Logout</a>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a asp-page="Registration">Register</a>
+        </li>
+        <li>
+            <a asp-page="LogIn">Login</a>
+        </li>
+    }
     <li>
         <a asp-page="ProductAdd">Product add</a>
     </li>
     <li>
-            <a asp-page="CategoryAdd">Category add</a>
-        </li>
+        <a asp-page="CategoryAdd">Category add</a>
+    </li>
 </ul>
 
 @if (Model.LoggedInUser is not null)
 {
     <p>Hello, @Model.LoggedInUser!.FirstName</p>
 }
+
+<div>
+    @foreach (var prod in Model.Products)
+    {
+        <div>
+            <h3>@prod.Name</h3>
+            <p>@prod.Description</p>
+            <p>@prod.Price</p>
+        </div>
+    }
+</div>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
