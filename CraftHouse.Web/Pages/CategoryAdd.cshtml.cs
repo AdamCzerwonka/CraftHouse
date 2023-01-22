@@ -23,6 +23,7 @@ public class CategoryAdd : PageModel
         
     }
 
+    
     public async Task OnPostAsync()
     {
         var category = new Category()
