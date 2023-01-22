@@ -1,0 +1,18 @@
+﻿@page
+@model CraftHouse.Web.Pages.Admin.Users
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+    </tr>
+    @foreach (var user in Model.AppUsers)
+    {
+        <tr>
+            <td>@user.FirstName @user.LastName</td> 
+            <td>@user.Email</td>
+            <td>@user.UserType</td>
+        </tr>
+    }
+</table>

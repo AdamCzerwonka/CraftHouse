@@ -29,8 +29,18 @@ public class User : EntityBase
     public string Email { get; set; } = null!;
 
     [Required]
+    public UserType UserType { get; set; } = UserType.Standard;
+
+    [Required]
     public string PasswordHash { get; set; } = null!;
 
     [Required]
     public string PasswordSalt { get; set; } = null!;
+}
+
+public enum UserType
+{
+    Standard,
+    Worker,
+    Administrator
 }

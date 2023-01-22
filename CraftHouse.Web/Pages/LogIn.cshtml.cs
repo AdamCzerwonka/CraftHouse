@@ -9,11 +9,13 @@ public class LogIn : PageModel
 {
     private readonly AppDbContext _context;
     private readonly IAuthService _authService;
+    private readonly ILogger<LogIn> _logger;
 
-    public LogIn(AppDbContext context, IAuthService authService)
+    public LogIn(AppDbContext context, IAuthService authService, ILogger<LogIn> logger)
     {
         _context = context;
         _authService = authService;
+        _logger = logger;
     }
 
     [BindProperty]
@@ -22,8 +24,12 @@ public class LogIn : PageModel
     [BindProperty]
     public string Password { get; set; } = null!;
 
-    public void OnGet()
+    [BindProperty]
+    public string? ReturnUrl { get; set; }
+
+    public void OnGet([FromQuery]string redirectUrl)
     {
+        ReturnUrl = redirectUrl;
     }
 
     public IActionResult OnPost()
@@ -35,6 +41,11 @@ public class LogIn : PageModel
         }
 
         var result = _authService.Login(user, Password);
-        return RedirectToPage(result ? "index" : "login");
+        if (!result)
+        {
+            return Page();
+        }
+
+        return Redirect(ReturnUrl ?? "/");
     }
 }
