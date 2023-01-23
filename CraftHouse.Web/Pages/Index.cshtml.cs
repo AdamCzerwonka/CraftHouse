@@ -23,9 +23,15 @@ public class IndexModel : PageModel
     public User? LoggedInUser { get; set; }
     public List<Product> Products { get; set; } = null!;
 
-    public void OnGet()
+    public int PageNumber { get; set; }
+
+    public void OnGet(int pageNumber = 1)
     {
+        PageNumber = pageNumber;
+        const int productsPerPage = 15;
+        var toSkip = productsPerPage * (pageNumber - 1);
+        
         LoggedInUser = _authService.GetLoggedInUser();
-        Products = _context.Products.ToList();
+        Products = _context.Products.Skip(toSkip).Take(productsPerPage).ToList();
     }
 }
