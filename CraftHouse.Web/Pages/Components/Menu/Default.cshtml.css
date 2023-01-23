@@ -1,0 +1,14 @@
+﻿li {
+    list-style: none;
+    padding: 10px;
+    font-size: 1.1rem;
+}
+
+ul {
+    display: flex;
+}
+
+nav {
+    width: 100%;
+}
+

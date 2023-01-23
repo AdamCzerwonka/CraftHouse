@@ -1,50 +1,19 @@
-﻿@page
+﻿@page "{pageNumber?}"
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<ul>
-    @if (Model.LoggedInUser != null)
-    {
-        <li>
-            <a asp-page="Logout">Logout</a>
-        </li>
-    }
-    else
-    {
-        <li>
-            <a asp-page="Registration">Register</a>
-        </li>
-        <li>
-            <a asp-page="LogIn">Login</a>
-        </li>
-    }
-    <li>
-        <a asp-page="ProductAdd">Product add</a>
-    </li>
-    <li>
-        <a asp-page="CategoryAdd">Category add</a>
-    </li>
-</ul>
-
-@if (Model.LoggedInUser is not null)
-{
-    <p>Hello, @Model.LoggedInUser!.FirstName</p>
-}
-
-<div>
+<div class="products">
     @foreach (var prod in Model.Products)
     {
-        <div>
+        <div class="products__product">
             <h3>@prod.Name</h3>
+            <img class="products__photo"src="~/photos/pexels-irina-varanovich-14686152.jpg"/>
             <p>@prod.Description</p>
             <p>@prod.Price</p>
         </div>
     }
 </div>
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<a href="/@(Model.PageNumber - 1)">Prev Page</a>
+<a href="/@(Model.PageNumber + 1)">Next Page</a>

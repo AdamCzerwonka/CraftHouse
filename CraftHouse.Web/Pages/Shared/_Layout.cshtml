@@ -4,9 +4,12 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - CraftHouse.Web</title>
+    <link rel="stylesheet" href="~/css/main.css"/>
+    <link rel="stylesheet" href="~/CraftHouse.Web.styles.css"/>
 </head>
 <body>
 <div class="container">
+    @await Component.InvokeAsync("Menu")
     <main role="main" class="pb-3">
         @RenderBody()
     </main>

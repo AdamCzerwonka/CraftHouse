@@ -1,0 +1,36 @@
+﻿@using CraftHouse.Web.Entities
+@model CraftHouse.Web.ViewComponents.MenuViewComponentModel
+<nav>
+    <ul>
+        <li>
+            <a class="link" asp-page="/Index">Home</a>
+        </li>
+        <li>
+            <a asp-page="/Index">Contact</a>
+        </li>
+        @if (Model.User == null)
+        {
+            <li>
+                <a asp-page="/LogIn">Login</a>
+            </li>
+            <li>
+                <a asp-page="/Registration">Register</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a asp-page="/Logout">Logout</a>
+            </li>
+            @if (Model.User.UserType is UserType.Administrator or UserType.Worker)
+            {
+                <li>
+                    <a asp-page="Admin/Users">Admin</a>
+                </li>
+                <li>
+                    <a asp-page="/ProductAdd">Add product</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
