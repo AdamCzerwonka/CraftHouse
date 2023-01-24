@@ -1,18 +1,28 @@
-﻿@page
+﻿@page "{handler?}"
 @model CraftHouse.Web.Pages.Admin.Users
 
 <table>
     <tr>
+        <th>User</th>
         <th>Name</th>
         <th>Email</th>
         <th>Role</th>
+        <th>Actions</th>
     </tr>
     @foreach (var user in Model.AppUsers)
     {
         <tr>
-            <td>@user.FirstName @user.LastName</td> 
+            <td>@user.Id</td>
+            <td>@user.FirstName @user.LastName</td>
             <td>@user.Email</td>
             <td>@user.UserType</td>
+            <td>
+                <form asp-page-handler="delete" method="post">
+                    <input type="hidden" value="@user.Id" name="userId"/>
+                    <button type="submit">Delete</button>
+                </form>
+                <a asp-page="/admin/User" asp-route-userId="@user.Id">Edit</a>
+            </td>
         </tr>
     }
 </table>
