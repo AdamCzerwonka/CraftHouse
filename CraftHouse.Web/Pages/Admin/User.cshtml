@@ -1,0 +1,18 @@
+﻿@page "{userId}"
+@using CraftHouse.Web.Entities;
+@model CraftHouse.Web.Pages.Admin.User
+
+<form method="post">
+    @foreach (var option in Enum.GetNames<UserType>())
+    {
+        <div>
+            <label for="@option">@option</label>
+            <input id="@option" type="radio" asp-for="UserType"
+                   value="@option" checked="@(Model.UserData.UserType == Enum.Parse<UserType>(option))"/>
+        </div>
+    }
+    
+    <input type="hidden" asp-for="UserId" value="@Model.UserId"/>
+
+    <button type="submit">Update</button>
+</form>

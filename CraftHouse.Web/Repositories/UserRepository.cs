@@ -1,6 +1,5 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CraftHouse.Web.Repositories;
 
@@ -23,5 +22,19 @@ public class UserRepository : IUserRepository
    {
       var user = _context.Users.FirstOrDefault(x => x.Email == email);
       return user;
+   }
+
+   public async Task UpdateUserAsync(User user)
+   {
+      user.UpdatedAt = DateTime.Now;
+      _context.Users.Update(user);
+      await _context.SaveChangesAsync();
+   }
+
+   public async Task DeleteUserAsync(User user)
+   {
+      user.DeletedAt = DateTime.Now;
+      _context.Users.Update(user);
+      await _context.SaveChangesAsync();
    }
 }
