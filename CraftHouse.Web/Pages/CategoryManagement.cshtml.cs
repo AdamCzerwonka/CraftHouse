@@ -83,4 +83,31 @@ public class CategoryManagement : PageModel
 
         return Redirect("/CategoryManagement");
     }
+
+    public async Task<IActionResult> OnPostRenameCategoryAsync()
+    {
+        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+
+        if (CategoryName.Length < 3)
+        {
+            ErrorMessage = "Incorrect category name";
+            Error = true;
+            return Page();
+        }
+        
+        var category = _context.Categories.FirstOrDefault(x => x.Id == CategoryId);
+
+        if (category == null)
+        {
+            ErrorMessage = "This category does not exists";
+            Error = true;
+            return Page();
+        }
+
+        category.Name = CategoryName;
+        _context.Categories.Update(category);
+        await _context.SaveChangesAsync();
+
+        return Redirect("/CategoryManagement");
+    }
 }

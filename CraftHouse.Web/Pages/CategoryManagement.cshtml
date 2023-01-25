@@ -23,9 +23,22 @@
     }
 </div>
 
-<form method="post" asp-page-handler="AddCategory">
-    <label for="categoryName">Name for new category</label>
-    <input type="text" id="categoryName" asp-for="CategoryName"/>
+<form method="post" asp-page-handler="AddCategory" class="categoryManagement__form">
+    <label for="addCategoryName">Name for new category</label>
+    <input type="text" id="addCategoryName" asp-for="CategoryName"/>
+
+    <input type="submit" value="Submit"/>
+</form>
+
+<form method="post" asp-page-handler="RenameCategory" class="categoryManagement__form">
+    <label for="renameCategory">Rename category</label>
+    <select id="renameCategory" asp-for="CategoryId">
+        @foreach (var category in Model.Categories)
+        {
+            <option value="@category.Id">@category.Id. @category.Name</option>
+        }
+    </select>
+    <input type="text" asp-for="CategoryName"/>
 
     <input type="submit" value="Submit"/>
 </form>
