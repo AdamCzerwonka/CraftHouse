@@ -2,7 +2,7 @@
 
 namespace CraftHouse.Web.Entities;
 
-public class Category
+public class Category:EntityBase
 {
     [Key]
     public int Id { get; set; }
