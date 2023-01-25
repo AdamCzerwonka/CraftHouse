@@ -63,6 +63,9 @@ nav a:hover {
   color: #ff2e63;
 }
 
+.categoryManagement__form {
+  margin: 10px;
+}
 /*
 #EAEAEA grey
 #FF2E63 red
