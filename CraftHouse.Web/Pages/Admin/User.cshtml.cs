@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CraftHouse.Web.Pages.Admin;
 
-[RequireAuth]
+[RequireAuth(UserType.Administrator)]
 public class User : PageModel
 {
     private readonly IUserRepository _userRepository;
@@ -31,7 +31,6 @@ public class User : PageModel
     public IActionResult OnGet(int userId)
     {
         UserId = userId;
-        _logger.LogWarning("UserID: {@userid}", userId);
         var user = _userRepository.GetUserById(userId);
         if (user is null)
         {
