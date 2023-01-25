@@ -1,0 +1,31 @@
+﻿@page
+@using CraftHouse.Web.Entities
+@model CraftHouse.Web.Pages.CategoryManagement
+
+
+@if (Model.Error == true)
+{
+    <div class="error">@Model.ErrorMessage</div>
+}
+
+<div class="categories__title">Current categories</div>
+<div class="categories">
+    @foreach (var category in Model.Categories)
+    {
+        <div class="categories__category">
+            <div class="categories__id">@category.Id</div>
+            <div class="categories__name">@category.Name</div>
+            <form method="post" asp-page-handler="DeleteCategory">
+                <input type="submit" value="Delete" class="categories__delete-button"/>
+                <input type="hidden" value="@category.Id" asp-for="CategoryId">
+            </form>
+        </div>
+    }
+</div>
+
+<form method="post" asp-page-handler="AddCategory">
+    <label for="categoryName">Name for new category</label>
+    <input type="text" id="categoryName" asp-for="CategoryName"/>
+
+    <input type="submit" value="Submit"/>
+</form>
