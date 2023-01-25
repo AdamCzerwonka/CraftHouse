@@ -21,12 +21,13 @@ public class CategoryManagement : PageModel
 
     public List<Product> Products { get; set; } = null!;
 
-    public bool Error { get; set; } = false;
-
-    public string ErrorMessage { get; set; } = "You can not delete category when any product is in it";
+    public string? Error { get; set; } = null;
 
     [BindProperty]
     public string CategoryName { get; set; } = null!;
+
+    private bool CategoryExists(string name) 
+        => _context.Categories.Any(x => x.Name == name);
 
     public void OnGet()
     {
@@ -36,8 +37,6 @@ public class CategoryManagement : PageModel
 
     public async Task<IActionResult> OnPostDeleteCategoryAsync()
     {
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-
         var containsProducts =
             _context.Products.Any(product => product.CategoryId == CategoryId && product.DeletedAt == null);
 
@@ -45,12 +44,12 @@ public class CategoryManagement : PageModel
 
         if (containsProducts || category == null)
         {
+            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+            Error = "You can not delete category when any product is in it";
             if (category == null)
             {
-                ErrorMessage = "This category does not exists";
+                Error = "This category does not exists";
             }
-
-            Error = true;
             return Page();
         }
 
@@ -64,12 +63,15 @@ public class CategoryManagement : PageModel
 
     public async Task<IActionResult> OnPostAddCategoryAsync()
     {
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-
-        if (CategoryName.Length < 3)
+        if (CategoryName.Length < 3 || CategoryExists(CategoryName))
         {
-            ErrorMessage = "Incorrect category name";
-            Error = true;
+            Error = "That named category already exits";
+            if (CategoryName.Length < 3)
+            {
+                Error = "Incorrect category name";
+            }
+            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+            CategoryName = "";
             return Page();
         }
 
@@ -86,21 +88,23 @@ public class CategoryManagement : PageModel
 
     public async Task<IActionResult> OnPostRenameCategoryAsync()
     {
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-
-        if (CategoryName.Length < 3)
+        if (CategoryName.Length < 3 || CategoryExists(CategoryName))
         {
-            ErrorMessage = "Incorrect category name";
-            Error = true;
+            Error = "That named category already exits";
+            if (CategoryName.Length < 3)
+            {
+                Error = "Incorrect category name";
+            }
+            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+            CategoryName = "";
             return Page();
         }
-        
+
         var category = _context.Categories.FirstOrDefault(x => x.Id == CategoryId);
 
         if (category == null)
         {
-            ErrorMessage = "This category does not exists";
-            Error = true;
+            Error = "This category does not exists";
             return Page();
         }
 

@@ -3,9 +3,9 @@
 @model CraftHouse.Web.Pages.CategoryManagement
 
 
-@if (Model.Error == true)
+@if (Model.Error != null)
 {
-    <div class="error">@Model.ErrorMessage</div>
+    <div class="error">@Model.Error</div>
 }
 
 <div class="categories__title">Current categories</div>
@@ -27,7 +27,7 @@
     <label for="addCategoryName">Name for new category</label>
     <input type="text" id="addCategoryName" asp-for="CategoryName"/>
 
-    <input type="submit" value="Submit"/>
+    <input type="submit" value="Add"/>
 </form>
 
 <form method="post" asp-page-handler="RenameCategory" class="categoryManagement__form">
@@ -40,5 +40,5 @@
     </select>
     <input type="text" asp-for="CategoryName"/>
 
-    <input type="submit" value="Submit"/>
+    <input type="submit" value="Rename"/>
 </form>
