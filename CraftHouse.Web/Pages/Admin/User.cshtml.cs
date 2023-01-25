@@ -1,10 +1,14 @@
 ﻿using CraftHouse.Web.Entities;
+using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
+using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CraftHouse.Web.Pages.Admin;
 
+[RequireAuth]
 public class User : PageModel
 {
     private readonly IUserRepository _userRepository;
@@ -15,7 +19,7 @@ public class User : PageModel
         _userRepository = userRepository;
         _logger = logger;
     }
-    
+
     public Entities.User UserData { get; set; } = null!;
 
     [BindProperty]
@@ -23,7 +27,7 @@ public class User : PageModel
 
     [BindProperty]
     public int UserId { get; set; }
-    
+
     public IActionResult OnGet(int userId)
     {
         UserId = userId;
@@ -49,6 +53,6 @@ public class User : PageModel
 
         user.UserType = UserType;
         await _userRepository.UpdateUserAsync(user);
-        return Redirect($"/admin/user/{UserId}");
+        return Redirect("/admin/users");
     }
 }

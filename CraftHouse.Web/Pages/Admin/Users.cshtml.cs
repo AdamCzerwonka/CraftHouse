@@ -35,6 +35,11 @@ public class Users : PageModel
             return Redirect("/login?RedirectUrl=" + HttpContext.Request.Path.Value);
         }
 
+        if (user.UserType != UserType.Administrator)
+        {
+            return NotFound();
+        }
+
         AppUsers = _context.Users.Where(x => x.DeletedAt == null).OrderBy(x => x.Id).ToList();
 
         return Page();
