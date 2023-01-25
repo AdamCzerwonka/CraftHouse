@@ -25,10 +25,9 @@ public class AuthFilter : IPageFilter
 
     public void OnPageHandlerExecuting(PageHandlerExecutingContext context)
     {
-        var result = context.HandlerInstance.GetType().GetCustomAttributes()
-            .Any(x => x.GetType() == typeof(RequireAuthAttribute));
+        var result = context.HandlerInstance.GetType().GetCustomAttributes().FirstOrDefault(x => x.GetType() == typeof(RequireAuthAttribute));
 
-        if (result)
+        if (result is not null)
         {
             var user = _authService.GetLoggedInUser();
             if (user is null)
@@ -38,11 +37,14 @@ public class AuthFilter : IPageFilter
             }
             else
             {
-                _logger.LogInformation("Handling request for user {@userId}", _authService.GetLoggedInUser()!.Id);
+                var allowedUserTypes = (result as RequireAuthAttribute)!.AllowedTypes;
+                if (!allowedUserTypes.Contains(user.UserType))
+                {
+                    context.Result = new NotFoundResult();
+                }
+                _logger.LogInformation("Allowed user types: {@userTypes}", allowedUserTypes);
             }
         }
-
-        _logger.LogWarning("Auth present {@result}", result);
     }
 
     public void OnPageHandlerExecuted(PageHandlerExecutedContext context)
