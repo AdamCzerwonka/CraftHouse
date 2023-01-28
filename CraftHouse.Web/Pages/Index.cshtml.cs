@@ -25,13 +25,24 @@ public class IndexModel : PageModel
 
     public int PageNumber { get; set; }
 
-    public void OnGet(int pageNumber = 1)
+    public IActionResult OnGet(int pageNumber = 1)
     {
+        if (pageNumber == 0)
+        {
+            pageNumber = 1;
+        }
+
         PageNumber = pageNumber;
         const int productsPerPage = 15;
         var toSkip = productsPerPage * (pageNumber - 1);
         
         LoggedInUser = _authService.GetLoggedInUser();
-        Products = _context.Products.Skip(toSkip).Take(productsPerPage).ToList();
+        Products = _context.Products.Where(x => x.DeletedAt == null).Skip(toSkip).Take(productsPerPage).ToList();
+        if (Products.Count == 0)
+        {
+            return Redirect($"/index/{PageNumber - 1}");
+        }
+
+        return Page();
     }
 }
