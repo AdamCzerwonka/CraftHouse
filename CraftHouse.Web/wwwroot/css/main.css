@@ -60,6 +60,22 @@ td,th {
   padding: 10px;
 }
 
+
+.categories__category {
+  display: flex;
+}
+
+.categories__category > * {
+  margin: 10px;
+}
+
+.error {
+  color: #ff2e63;
+}
+
+.categoryManagement__form {
+  margin: 10px;
+}
 /*
 #EAEAEA grey
 #FF2E63 red

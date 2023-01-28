@@ -1,0 +1,44 @@
+﻿@page
+@using CraftHouse.Web.Entities
+@model CraftHouse.Web.Pages.CategoryManagement
+
+
+@if (Model.Error != null)
+{
+    <div class="error">@Model.Error</div>
+}
+
+<div class="categories__title">Current categories</div>
+<div class="categories">
+    @foreach (var category in Model.Categories)
+    {
+        <div class="categories__category">
+            <div class="categories__id">@category.Id</div>
+            <div class="categories__name">@category.Name</div>
+            <form method="post" asp-page-handler="DeleteCategory">
+                <input type="submit" value="Delete" class="categories__delete-button"/>
+                <input type="hidden" value="@category.Id" asp-for="CategoryId">
+            </form>
+        </div>
+    }
+</div>
+
+<form method="post" asp-page-handler="AddCategory" class="categoryManagement__form">
+    <label for="addCategoryName">Name for new category</label>
+    <input type="text" id="addCategoryName" asp-for="CategoryName"/>
+
+    <input type="submit" value="Add"/>
+</form>
+
+<form method="post" asp-page-handler="RenameCategory" class="categoryManagement__form">
+    <label for="renameCategory">Rename category</label>
+    <select id="renameCategory" asp-for="CategoryId">
+        @foreach (var category in Model.Categories)
+        {
+            <option value="@category.Id">@category.Id. @category.Name</option>
+        }
+    </select>
+    <input type="text" asp-for="CategoryName"/>
+
+    <input type="submit" value="Rename"/>
+</form>
