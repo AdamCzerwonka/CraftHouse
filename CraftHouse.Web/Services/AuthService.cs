@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
+using CraftHouse.Web.Repositories;
 using FluentValidation;
 using Konscious.Security.Cryptography;
 
@@ -14,14 +15,16 @@ public class AuthService : IAuthService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<AuthService> _logger;
     private readonly IValidator<User> _validator;
+    private readonly IUserRepository _userRepository;
 
     public AuthService(AppDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<AuthService> logger,
-        IValidator<User> validator)
+        IValidator<User> validator, IUserRepository userRepository)
     {
         _context = context;
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
         _validator = validator;
+        _userRepository = userRepository;
     }
 
 
@@ -37,12 +40,10 @@ public class AuthService : IAuthService
                 _logger.LogWarning("Validation error: {@Error}", validationFailure.ErrorMessage);
             }
 
-
-
-            return new AuthResult() { Succeeded = false, Errors = errors };
+            return new AuthResult { Succeeded = false, Errors = errors };
         }
 
-        var userInDb = _context.Users.FirstOrDefault(x => x.Email == user.Email);
+        var userInDb = _userRepository.GetUserByEmail(user.Email);
         if (userInDb is not null)
         {
             throw new InvalidOperationException("User with given email already exists in db");
@@ -93,7 +94,7 @@ public class AuthService : IAuthService
     public User? GetLoggedInUser()
     {
         var userId = _httpContextAccessor.HttpContext!.Session.GetInt32("userID");
-        return userId is null ? null : _context.Users.FirstOrDefault(x => x.Id == userId);
+        return userId is null ? null : _userRepository.GetUserById(userId.GetValueOrDefault());
     }
 
     public void Logout()

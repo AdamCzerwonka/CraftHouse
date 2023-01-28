@@ -1,4 +1,6 @@
 using CraftHouse.Web.Data;
+using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using CraftHouse.Web.Validators;
 using FluentValidation;
@@ -36,9 +38,13 @@ try
     services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     services.AddTransient<IAuthService, AuthService>();
+    services.AddTransient<IUserRepository, UserRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
-    services.AddRazorPages();
+    services.AddRazorPages().AddMvcOptions(options =>
+    {
+        options.Filters.Add<AuthFilter>();
+    });
 
     var app = builder.Build();
     app.UseSerilogRequestLogging();
