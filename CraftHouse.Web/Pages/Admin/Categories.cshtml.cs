@@ -1,10 +1,12 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
+using CraftHouse.Web.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace CraftHouse.Web.Pages;
+namespace CraftHouse.Web.Pages.Admin;
 
+[RequireAuth(UserType.Administrator)]
 public class CategoryManagement : PageModel
 {
     private readonly AppDbContext _context;
@@ -19,20 +21,17 @@ public class CategoryManagement : PageModel
 
     public List<Category> Categories { get; set; } = null!;
 
-    public List<Product> Products { get; set; } = null!;
-
-    public string? Error { get; set; } = null;
+    public string? Error { get; set; }
 
     [BindProperty]
     public string CategoryName { get; set; } = null!;
 
-    private bool CategoryExists(string name) 
+    private bool CategoryExists(string name)
         => _context.Categories.Any(x => x.Name == name);
 
     public void OnGet()
     {
         Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-        Products = _context.Products.ToList();
     }
 
     public async Task<IActionResult> OnPostDeleteCategoryAsync()
@@ -45,11 +44,11 @@ public class CategoryManagement : PageModel
         if (containsProducts || category == null)
         {
             Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-            Error = "You can not delete category when any product is in it";
-            if (category == null)
-            {
-                Error = "This category does not exists";
-            }
+            Error =
+                category == null
+                    ? "This category does not exists"
+                    : "You can not delete category when any product is in it";
+            
             return Page();
         }
 
@@ -58,7 +57,7 @@ public class CategoryManagement : PageModel
         _context.Categories.Update(category);
         await _context.SaveChangesAsync();
 
-        return Redirect("/CategoryManagement");
+        return Redirect("Categories");
     }
 
     public async Task<IActionResult> OnPostAddCategoryAsync()
@@ -70,12 +69,13 @@ public class CategoryManagement : PageModel
             {
                 Error = "Incorrect category name";
             }
+
             Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
             CategoryName = "";
             return Page();
         }
 
-        var category = new Category()
+        var category = new Category
         {
             Name = CategoryName
         };
@@ -83,7 +83,7 @@ public class CategoryManagement : PageModel
         await _context.Categories.AddAsync(category);
         await _context.SaveChangesAsync();
 
-        return Redirect("/CategoryManagement");
+        return Redirect("Categories");
     }
 
     public async Task<IActionResult> OnPostRenameCategoryAsync()
@@ -95,6 +95,7 @@ public class CategoryManagement : PageModel
             {
                 Error = "Incorrect category name";
             }
+
             Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
             CategoryName = "";
             return Page();
@@ -112,6 +113,6 @@ public class CategoryManagement : PageModel
         _context.Categories.Update(category);
         await _context.SaveChangesAsync();
 
-        return Redirect("/CategoryManagement");
+        return Redirect("Categories");
     }
 }
