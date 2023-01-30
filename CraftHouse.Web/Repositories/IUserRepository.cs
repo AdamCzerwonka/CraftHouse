@@ -1,4 +1,5 @@
 ﻿using CraftHouse.Web.Entities;
+using CraftHouse.Web.Services;
 
 namespace CraftHouse.Web.Repositories;
 
@@ -9,4 +10,5 @@ public interface IUserRepository
     Task UpdateUserAsync(User user);
     Task DeleteUserAsync(User user);
     IEnumerable<User> Get();
+    Task<Result> CreateAsync(User user, string password);
 }
