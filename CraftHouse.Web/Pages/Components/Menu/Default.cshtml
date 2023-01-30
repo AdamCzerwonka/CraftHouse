@@ -25,13 +25,13 @@
             @if (Model.User.UserType is UserType.Administrator or UserType.Worker)
             {
                 <li>
-                    <a asp-page="/Admin/Users">Admin</a>
+                    <a asp-page="/Admin/Users">Users</a>
                 </li>
                 <li>
                     <a asp-page="/ProductManagement">Manage products</a>
                 </li>
                 <li>
-                    <a asp-page="/CategoryManagement">Manage categories</a>
+                    <a asp-page="/Admin/Categories">Categories</a>
                 </li>
             }
         }
