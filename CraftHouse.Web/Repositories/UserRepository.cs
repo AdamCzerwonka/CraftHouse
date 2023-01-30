@@ -24,6 +24,11 @@ public class UserRepository : IUserRepository
       return user;
    }
 
+   public IEnumerable<User> Get()
+   {
+      return _context.Users.Where(x => x.DeletedAt == null).OrderBy(x => x.Id);
+   }
+
    public async Task UpdateUserAsync(User user)
    {
       user.UpdatedAt = DateTime.Now;
