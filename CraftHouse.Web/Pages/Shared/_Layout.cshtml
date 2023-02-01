@@ -8,11 +8,9 @@
     <link rel="stylesheet" href="~/css/nav.css"/>
 </head>
 <body>
-<div class="container">
     @await Component.InvokeAsync("Menu")
-    <main role="main" class="pb-3">
+    <main role="main" class="content">
         @RenderBody()
     </main>
-</div>
 </body>
 </html>
