@@ -56,7 +56,7 @@ public class CategoryManagement : PageModel
 
         _context.Categories.Update(category);
         await _context.SaveChangesAsync();
-
+        
         return Redirect("Categories");
     }
 

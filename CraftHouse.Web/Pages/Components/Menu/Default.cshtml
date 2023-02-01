@@ -1,39 +1,42 @@
 ﻿@using CraftHouse.Web.Entities
 @model CraftHouse.Web.ViewComponents.MenuViewComponentModel
 <nav>
-    <ul>
-        <li>
-            <a class="link" asp-page="/Index">Home</a>
+    <ul class="nav__menu">
+        <li class="nav__item">
+            <a class="nav__link nav__logo" asp-page="/Index">CraftHouse</a>
         </li>
-        <li>
-            <a asp-page="/Index">Contact</a>
+        <li class="nav__item">
+            <a class="nav__link" asp-page="/Index">Products</a>
+        </li>
+        <li class="nav__item">
+            <a class="nav__link" asp-page="/Index">Contact</a>
         </li>
         @if (Model.User == null)
         {
-            <li>
-                <a asp-page="/LogIn">Login</a>
+            <li class="nav__item left">
+                <a class="nav__link" asp-page="/Registration">Register</a>
             </li>
-            <li>
-                <a asp-page="/Registration">Register</a>
+            <li class="nav__item">
+                <a class="nav__link border" asp-page="/LogIn">Login</a>
             </li>
         }
         else
         {
-            <li>
-                <a asp-page="/Logout">Logout</a>
-            </li>
             @if (Model.User.UserType is UserType.Administrator or UserType.Worker)
             {
-                <li>
-                    <a asp-page="/Admin/Users">Users</a>
+                <li class="nav__item">
+                    <a class="nav__link" asp-page="/Admin/Users">Users</a>
                 </li>
-                <li>
-                    <a asp-page="/ProductManagement">Manage products</a>
+                <li class="nav__item">
+                    <a class="nav__link" asp-page="/ProductManagement">Manage products</a>
                 </li>
-                <li>
-                    <a asp-page="/Admin/Categories">Categories</a>
+                <li class="nav__item">
+                    <a class="nav__link" asp-page="/Admin/Categories">Categories</a>
                 </li>
             }
+            <li class="nav__item left">
+                <a class="nav__link" asp-page="/Logout">Logout</a>
+            </li>
         }
     </ul>
 </nav>
