@@ -22,11 +22,11 @@ public class Product:EntityBase
     [Required]
     public int CategoryId { get; set; }
 
-    public Category Category { get; set; }
+    public Category Category { get; set; } = null!;
 
-    public ICollection<Option> Options { get; set; }
+    public ICollection<Option> Options { get; set; } = null!;
 
-    /*
+    /*0
     [Required]
     public string MeatType { get; set; } = null!;
     // TODO CHANGE MEAT TYPE
