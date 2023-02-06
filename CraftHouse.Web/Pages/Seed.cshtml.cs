@@ -1,7 +1,6 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CraftHouse.Web.Pages;
 
