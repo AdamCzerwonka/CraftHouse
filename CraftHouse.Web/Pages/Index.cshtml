@@ -8,12 +8,22 @@
     @foreach (var prod in Model.Products)
     {
         <div class="products__product">
-            <h3>@prod.Name</h3>
             <img class="products__photo" src="~/photos/pexels-irina-varanovich-14686152.jpg" alt="Product image"/>
+            <p class="product__name">@prod.Name</p>
             <p>@prod.Description</p>
             <p>@prod.Price</p>
+            <a href="">Add to cart</a>
         </div>
     }
 </div>
-<a href="/@(Model.PageNumber - 1)">Prev Page</a>
-<a href="/@(Model.PageNumber + 1)">Next Page</a>
+<div class="products__pagination">
+    @if (Model.PageNumber != 1)
+    {
+        <a href="/@(Model.PageNumber - 1)">Prev Page</a>
+    }
+    <span>@Model.PageNumber</span>
+    @if ((int)Model.ViewData["lastPageNumber"]! != Model.PageNumber)
+    {
+        <a href="/@(Model.PageNumber + 1)">Next Page</a>
+    }
+</div>

@@ -7,19 +7,25 @@
     <div class="error">@Model.Error</div>
 }
 
-<div class="categories__title">Current categories</div>
+<h1>Categories</h1>
 <div class="categories">
-    @foreach (var category in Model.Categories)
-    {
-        <div class="categories__category">
-            <div class="categories__id">@category.Id</div>
-            <div class="categories__name">@category.Name</div>
-            <form method="post" asp-page-handler="DeleteCategory">
-                <input type="submit" value="Delete" class="categories__delete-button"/>
-                <input type="hidden" value="@category.Id" asp-for="CategoryId">
-            </form>
-        </div>
-    }
+    <table>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        @foreach (var category in Model.Categories)
+        {
+            <tr>
+                <td>@category.Id</td>
+                <td>@category.Name</td>
+                <td>
+                    <a asp-page="/Admin/CategoryPage" asp-route-id="@category.Id">Show details</a>
+                </td>
+            </tr>
+        }
+    </table>
 </div>
 
 <form method="post" asp-page-handler="AddCategory" class="categoryManagement__form">

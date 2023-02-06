@@ -26,23 +26,29 @@ public class IndexModel : PageModel
     {
         LoggedInUser = _authService.GetLoggedInUser();
 
-        pageNumber = pageNumber == 0 ? 1 : pageNumber;
+        if (pageNumber <= 0)
+        {
+            throw new InvalidOperationException("Page does not exists");
+        }
 
         PageNumber = pageNumber;
         const int productsPerPage = 15;
         var toSkip = productsPerPage * (pageNumber - 1);
-        
+
         Products = _context
             .Products
             .Where(x => x.DeletedAt == null)
-            .OrderBy(x=>x.Id)
+            .OrderBy(x => x.Id)
             .Skip(toSkip)
             .Take(productsPerPage)
             .ToList();
-        
+
+        var productCount = _context.Products.Count(x => x.DeletedAt == null);
+        ViewData["lastPageNumber"] = 1 + productCount / productsPerPage;
+
         if (Products.Count == 0)
         {
-            return Redirect($"/index/{PageNumber - 1}");
+            throw new InvalidOperationException("Page does not exists");
         }
 
         return Page();

@@ -39,6 +39,7 @@ try
 
     services.AddTransient<IAuthService, AuthService>();
     services.AddTransient<IUserRepository, UserRepository>();
+    services.AddTransient<ICategoryRepository, CategoryRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
     services.AddRazorPages().AddMvcOptions(options =>

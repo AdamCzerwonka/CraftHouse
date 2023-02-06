@@ -11,8 +11,8 @@ public class Seed : PageModel
     public Seed(AppDbContext context)
     {
         _context = context;
-    } 
-    
+    }
+
     public async Task OnGetAsync()
     {
         var categories = new List<Category>()
@@ -20,23 +20,23 @@ public class Seed : PageModel
             new() { Name = "Test" },
             new() { Name = "Test2" }
         };
-        
+
         _context.Categories.AddRange(categories);
 
-        var products = new List<Product>
+        var products = new List<Product>();
+
+        for (var i = 0; i < 50; i++)
         {
-            new() { CategoryId = 1, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 1, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 1, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 1, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 1, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 2, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 2, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 2, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 2, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-            new() { CategoryId = 2, Name = "TestProduct", Price = 10.99f, Description = "Test product" },
-        };
-        
+            var product = new Product()
+            {
+                CategoryId = 2,
+                Name = $"Test Product #{i}",
+                Price = 15.99f,
+                Description = $"Test product Description #{i}"
+            };
+            products.Add(product);
+        }
+
         _context.Products.AddRange(products);
 
         await _context.SaveChangesAsync();
