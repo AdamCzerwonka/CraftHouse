@@ -8,13 +8,11 @@ namespace CraftHouse.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
     private readonly IAuthService _authService;
     private readonly AppDbContext _context;
 
-    public IndexModel(ILogger<IndexModel> logger, IAuthService authService, AppDbContext context)
+    public IndexModel(IAuthService authService, AppDbContext context)
     {
-        _logger = logger;
         _authService = authService;
         _context = context;
     }
@@ -26,17 +24,22 @@ public class IndexModel : PageModel
 
     public IActionResult OnGet(int pageNumber = 1)
     {
-        if (pageNumber == 0)
-        {
-            pageNumber = 1;
-        }
+        LoggedInUser = _authService.GetLoggedInUser();
+
+        pageNumber = pageNumber == 0 ? 1 : pageNumber;
 
         PageNumber = pageNumber;
         const int productsPerPage = 15;
         var toSkip = productsPerPage * (pageNumber - 1);
         
-        LoggedInUser = _authService.GetLoggedInUser();
-        Products = _context.Products.Where(x => x.DeletedAt == null).Skip(toSkip).Take(productsPerPage).ToList();
+        Products = _context
+            .Products
+            .Where(x => x.DeletedAt == null)
+            .OrderBy(x=>x.Id)
+            .Skip(toSkip)
+            .Take(productsPerPage)
+            .ToList();
+        
         if (Products.Count == 0)
         {
             return Redirect($"/index/{PageNumber - 1}");

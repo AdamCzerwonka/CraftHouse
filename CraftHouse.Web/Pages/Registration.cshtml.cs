@@ -1,5 +1,6 @@
 ﻿using CraftHouse.Web.DTOs;
 using CraftHouse.Web.Entities;
+using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,11 +9,11 @@ namespace CraftHouse.Web.Pages;
 
 public class Registration : PageModel
 {
-    private readonly IAuthService _authService;
+    private readonly IUserRepository _userRepository;
 
-    public Registration(IAuthService authService)
+    public Registration(IUserRepository userRepository)
     {
-        _authService = authService;
+        _userRepository = userRepository;
     }
 
     [BindProperty]
@@ -33,13 +34,12 @@ public class Registration : PageModel
             ValidationErrors = new List<string> { "Passwords do not match" };
         }
 
-        var result = await _authService.RegisterUser(user, UserRegister.Password);
-        if (!result.Succeeded)
+        var result = await _userRepository.CreateAsync(user, UserRegister.Password);
+        if (result.Succeeded)
         {
-            ValidationErrors = result.Errors;
-            return Page();
+            return RedirectToPage("/Index");
         }
-
-        return RedirectToPage("index");
+        ValidationErrors = result.Errors;
+        return Page();
     }
 }
