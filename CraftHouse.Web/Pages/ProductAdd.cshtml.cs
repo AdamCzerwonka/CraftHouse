@@ -2,7 +2,6 @@
 using CraftHouse.Web.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
 namespace CraftHouse.Web.Pages;
 
 public class ProductAdd : PageModel

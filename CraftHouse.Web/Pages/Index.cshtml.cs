@@ -3,7 +3,6 @@ using CraftHouse.Web.Entities;
 using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Serilog;
 
 namespace CraftHouse.Web.Pages;
 
