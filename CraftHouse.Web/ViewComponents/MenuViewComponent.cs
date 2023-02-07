@@ -13,9 +13,9 @@ public class MenuViewComponent : ViewComponent
         _authService = authService;
     }
     
-    public IViewComponentResult Invoke()
+    public async Task<IViewComponentResult> InvokeAsync(CancellationToken cancellationToken)
     {
-        var user = _authService.GetLoggedInUser();
+        var user = await _authService.GetLoggedInUserAsync(cancellationToken);
         var model = new MenuViewComponentModel()
         {
             User = user
