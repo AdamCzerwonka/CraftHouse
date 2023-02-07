@@ -52,6 +52,12 @@ try
     services.AddTransient<ICategoryRepository, CategoryRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
+    services.Configure<RouteOptions>(options =>
+    {
+        options.LowercaseUrls = true;
+        options.LowercaseQueryStrings = true;
+    });
+
     services.AddRazorPages().AddMvcOptions(options =>
     {
         options.Filters.Add<AuthFilter>();
