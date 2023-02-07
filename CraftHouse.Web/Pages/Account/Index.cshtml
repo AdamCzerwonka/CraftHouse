@@ -1,0 +1,29 @@
+﻿@page "{handler?}"
+@model CraftHouse.Web.Pages.Account.IndexModel
+
+<h1>My account</h1>
+<p>@Model.UserData.FirstName @Model.UserData.LastName</p>
+
+<h2>Change password</h2>
+<div>
+    <form method="post" asp-page-handler="password">
+        <div>
+            <label for="currentPassword">Current password:</label>
+            <input type="password" id="currentPassword" asp-for="UpdatePassword.OldPassword"/>
+        </div>
+        <div>
+            <label for="newPassword">New password:</label>
+            <input type="password" id="newPassword" asp-for="UpdatePassword.Password"/>
+        </div>
+        <div>
+            <label for="repeatPassword">Repeat new password:</label>
+            <input type="password" id="repeatPassword" asp-for="UpdatePassword.Password2"/>
+        </div>
+        <input type="submit" value="Change password"/>
+    </form>
+    
+    @foreach (var error in Model.Errors)
+    {
+        <p style="color:red">@error</p>
+    }
+</div>
