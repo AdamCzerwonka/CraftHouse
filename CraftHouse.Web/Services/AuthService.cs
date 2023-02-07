@@ -51,10 +51,11 @@ public class AuthService : IAuthService
         return userId != null;
     }
 
-    public User? GetLoggedInUser()
+    public async Task<User?> GetLoggedInUserAsync(CancellationToken cancellationToken)
     {
         var userId = _httpContextAccessor.HttpContext!.Session.GetInt32("userID");
-        return userId is null ? null : _userRepository.GetUserById(userId.GetValueOrDefault());
+        var user = await _userRepository.GetUserByIdAsync(userId.GetValueOrDefault(), cancellationToken);
+        return userId is null ? null : user;
     }
 
     public void Logout()

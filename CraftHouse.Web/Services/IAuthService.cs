@@ -7,6 +7,6 @@ public interface IAuthService
     bool VerifyUserPassword(User user, string password);
     bool Login(User user, string password);
     bool IsLoggedIn();
-    User? GetLoggedInUser();
+    Task<User?> GetLoggedInUserAsync(CancellationToken cancellationToken);
     void Logout();
 }
