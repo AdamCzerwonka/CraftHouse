@@ -6,10 +6,10 @@ namespace CraftHouse.Web.Repositories;
 public interface IUserRepository
 {
     Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken);
-    User? GetUserByEmail(string email);
+    Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken);
     Task UpdateUserAsync(User user, CancellationToken cancellationToken);
-    Task DeleteUserAsync(User user);
+    Task DeleteUserAsync(User user, CancellationToken cancellationToken);
     IEnumerable<User> Get();
-    Task<Result> CreateAsync(User user, string password);
+    Task<Result> CreateUserAsync(User user, string password, CancellationToken cancellationToken);
     Task<Result> UpdateUserPasswordAsync(User user, string password, CancellationToken cancellationToken);
 }
