@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CraftHouse.Web.Pages;
 
-public class LogIn : PageModel
+public class Login : PageModel
 {
     private readonly AppDbContext _context;
     private readonly IAuthService _authService;
-    private readonly ILogger<LogIn> _logger;
+    private readonly ILogger<Login> _logger;
 
-    public LogIn(AppDbContext context, IAuthService authService, ILogger<LogIn> logger)
+    public Login(AppDbContext context, IAuthService authService, ILogger<Login> logger)
     {
         _context = context;
         _authService = authService;
