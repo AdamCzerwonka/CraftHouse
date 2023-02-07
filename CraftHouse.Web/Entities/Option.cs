@@ -9,6 +9,9 @@ public class Option : EntityBase
 
     [Required]
     public string Name { get; set; } = null!;
+    
+    [Required]
+    public int MaxOccurs { get; set; }
 
     public ICollection<Product> Products { get; set; } = null!;
 
