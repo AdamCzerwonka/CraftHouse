@@ -10,11 +10,13 @@ public class IndexModel : PageModel
 {
     private readonly IAuthService _authService;
     private readonly AppDbContext _context;
+    private readonly ILogger<Index> _logger;
 
-    public IndexModel(IAuthService authService, AppDbContext context)
+    public IndexModel(IAuthService authService, AppDbContext context, ILogger<Index> logger)
     {
         _authService = authService;
         _context = context;
+        _logger = logger;
     }
 
     public User? LoggedInUser { get; set; }
@@ -22,9 +24,10 @@ public class IndexModel : PageModel
 
     public int PageNumber { get; set; }
 
-    public IActionResult OnGet(int pageNumber = 1)
+    public async Task<IActionResult> OnGetAsync(int pageNumber, CancellationToken cancellationToken)
     {
-        LoggedInUser = _authService.GetLoggedInUser();
+        _logger.LogWarning("Page number: {@number}", pageNumber);
+        LoggedInUser = await _authService.GetLoggedInUserAsync(cancellationToken);
 
         if (pageNumber <= 0)
         {
