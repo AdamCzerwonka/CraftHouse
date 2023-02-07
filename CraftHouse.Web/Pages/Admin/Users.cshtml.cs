@@ -31,14 +31,15 @@ public class Users : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostDeleteAsync(int userId)
+    public async Task<IActionResult> OnPostDeleteAsync(int userId, CancellationToken cancellationToken)
     {
-        if (_authService.GetLoggedInUser()!.Id == userId)
+        var loggedInUser = await _authService.GetLoggedInUserAsync(cancellationToken);
+        if (loggedInUser!.Id  == userId)
         {
             throw new InvalidOperationException("Cannot delete currently logged in user");
         }
 
-        var user = _userRepository.GetUserById(userId);
+        var user = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
         if (user is null)
         {
             return NotFound();

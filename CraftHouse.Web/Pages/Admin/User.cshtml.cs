@@ -28,10 +28,10 @@ public class User : PageModel
     [BindProperty]
     public int UserId { get; set; }
 
-    public IActionResult OnGet(int userId)
+    public async Task<IActionResult> OnGet(int userId, CancellationToken cancellationToken)
     {
         UserId = userId;
-        var user = _userRepository.GetUserById(userId);
+        var user = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
         if (user is null)
         {
             return NotFound();
@@ -42,16 +42,16 @@ public class User : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        var user = _userRepository.GetUserById(UserId);
+        var user = await _userRepository.GetUserByIdAsync(UserId, cancellationToken);
         if (user is null)
         {
             return NotFound();
         }
 
         user.UserType = UserType;
-        await _userRepository.UpdateUserAsync(user);
+        await _userRepository.UpdateUserAsync(user, cancellationToken);
         return Redirect("/admin/users");
     }
 }
