@@ -45,7 +45,7 @@ public class Users : PageModel
             return NotFound();
         }
 
-        await _userRepository.DeleteUserAsync(user);
+        await _userRepository.DeleteUserAsync(user, cancellationToken);
 
         return Redirect("/admin/users");
     }

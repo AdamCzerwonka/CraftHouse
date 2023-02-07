@@ -78,7 +78,7 @@ public class ProductManagement : PageModel
         
         var options = _context.Products.Include(x => x.Options).FirstOrDefault(x => x.Id == ProductId);
         
-        foreach (var option in options.Options)
+        foreach (var option in options!.Options)
         {
             option.DeletedAt = DateTime.Now;
         }
