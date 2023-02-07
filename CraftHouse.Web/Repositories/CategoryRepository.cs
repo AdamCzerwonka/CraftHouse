@@ -12,6 +12,12 @@ public class CategoryRepository : ICategoryRepository
     {
         _context = context;
     }
+    
+    public async Task<List<Category>> GetCategoriesAsync(CancellationToken cancellationToken)
+    => await _context
+        .Categories
+        .Where(x => x.DeletedAt == null)
+        .ToListAsync(cancellationToken);
 
     public async Task<Category?> GetCategoryWithProducts(int id, CancellationToken cancellationToken)
         => await _context

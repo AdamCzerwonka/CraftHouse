@@ -4,6 +4,7 @@ namespace CraftHouse.Web.Repositories;
 
 public interface ICategoryRepository
 {
+    Task<List<Category>> GetCategoriesAsync(CancellationToken cancellationToken);
     Task<Category?> GetCategoryWithProducts(int id, CancellationToken cancellationToken);
     Task<Category?> GetCategoryByIdAsync(int id, CancellationToken cancellationToken);
     Task<bool> IsCategoryEmptyAsync(int id, CancellationToken cancellationToken);

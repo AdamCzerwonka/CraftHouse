@@ -1,6 +1,7 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,11 +10,11 @@ namespace CraftHouse.Web.Pages.Admin;
 [RequireAuth(UserType.Administrator)]
 public class CategoryManagement : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryManagement(AppDbContext context)
+    public CategoryManagement(ICategoryRepository categoryRepository)
     {
-        _context = context;
+        _categoryRepository = categoryRepository;
     }
     
     public List<Category> Categories { get; set; } = null!;
@@ -23,17 +24,18 @@ public class CategoryManagement : PageModel
     [BindProperty]
     public string CategoryName { get; set; } = null!;
 
-    private bool CategoryExists(string name)
-        => _context.Categories.Any(x => x.Name == name);
-
-    public void OnGet()
+    public async Task<IActionResult> OnGet(CancellationToken cancellationToken)
     {
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+        Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
+
+        return Page();
     }
     
-    public async Task<IActionResult> OnPostAddCategoryAsync()
+    public async Task<IActionResult> OnPostAddCategoryAsync(CancellationToken cancellationToken)
     {
-        if (CategoryName.Length < 3 || CategoryExists(CategoryName))
+        var isCategoryExisting = await _categoryRepository.CategoryExistsAsync(CategoryName, cancellationToken);
+        
+        if (CategoryName.Length < 3 || isCategoryExisting)
         {
             Error = "That named category already exits";
             if (CategoryName.Length < 3)
@@ -41,7 +43,7 @@ public class CategoryManagement : PageModel
                 Error = "Incorrect category name";
             }
 
-            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+            Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
             CategoryName = "";
             return Page();
         }
@@ -50,9 +52,8 @@ public class CategoryManagement : PageModel
         {
             Name = CategoryName
         };
-
-        await _context.Categories.AddAsync(category);
-        await _context.SaveChangesAsync();
+        
+        await _categoryRepository.UpdateCategoryAsync(category, cancellationToken);
 
         return Redirect("Categories");
     }
