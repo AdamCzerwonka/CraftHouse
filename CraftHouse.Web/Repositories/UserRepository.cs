@@ -3,6 +3,7 @@ using CraftHouse.Web.Entities;
 using CraftHouse.Web.Helpers;
 using CraftHouse.Web.Services;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace CraftHouse.Web.Repositories;
 
@@ -16,12 +17,12 @@ public class UserRepository : IUserRepository
       _context = context;
       _validator = validator;
    }
-   
-   public User? GetUserById(int id)
-   {
-      var user = _context.Users.FirstOrDefault(x => x.Id == id);
-      return user;
-   }
+
+   public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+      => await _context
+         .Users
+         .AsNoTracking()
+         .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
    public User? GetUserByEmail(string email)
    {
@@ -68,11 +69,25 @@ public class UserRepository : IUserRepository
       return new Result { Succeeded = true };
    }
 
-   public async Task UpdateUserAsync(User user)
+   public async Task<Result> UpdateUserPasswordAsync(User user, string password, CancellationToken cancellationToken)
+   {
+      var passwordSalt = HashingHelper.CreateSalt();
+      var passwordHash = HashingHelper.HashPassword(password, passwordSalt);
+      
+      user.PasswordHash = Convert.ToBase64String(passwordHash);
+      user.PasswordSalt = Convert.ToBase64String(passwordSalt);
+
+      _context.Users.Update(user);
+      await _context.SaveChangesAsync(cancellationToken);
+
+      return new Result { Succeeded = true };
+   }
+
+   public async Task UpdateUserAsync(User user, CancellationToken cancellationToken = default)
    {
       user.UpdatedAt = DateTime.Now;
       _context.Users.Update(user);
-      await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync(cancellationToken);
    }
 
    public async Task DeleteUserAsync(User user)
