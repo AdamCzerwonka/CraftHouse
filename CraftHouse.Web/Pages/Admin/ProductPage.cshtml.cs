@@ -36,13 +36,7 @@ public class ProductPage : PageModel
     public int ProductId { get; set; }
 
     public List<Category> Categories { get; set; } = null!;
-
-    [BindProperty]
-    public List<string> OptionValues { get; set; } = null!;
-
-    [BindProperty]
-    public List<float> OptionPrices { get; set; } = null!;
-
+    
     public int OptionNumber { get; set; }
 
     public void OnGet(int productId, int optionNumber)
@@ -73,24 +67,5 @@ public class ProductPage : PageModel
         await _context.SaveChangesAsync();
 
         return Redirect($"/admin/ProductPage/{ProductId}?optionNumber={OptionNumber}");
-    }
-
-    public async Task<IActionResult> OnPostOptionAsync()
-    {
-        var product = _context.Products.FirstOrDefault(x => x.Id == ProductId);
-
-        ICollection<OptionValue> optionValues = OptionValues.Select((t, i) => new OptionValue() { Value = t, Price = OptionPrices[i] }).ToList();
-
-        var option = new Option()
-        {
-            Name = Name,
-            OptionValues = optionValues,
-            Products = new[] { product! }
-        };
-
-        await _context.Options.AddAsync(option);
-        await _context.SaveChangesAsync();
-
-        return Redirect($"/admin/ProductPage/{ProductId}?optionNumber={1}");
     }
 }

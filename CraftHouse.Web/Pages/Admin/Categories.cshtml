@@ -7,7 +7,15 @@
     <div class="error">@Model.Error</div>
 }
 
-<h1>Categories</h1>
+<h1>New category</h1>
+<form method="post" asp-page-handler="AddCategory" class="categoryManagement__form">
+    <label for="addCategoryName">Name for new category</label>
+    <input type="text" id="addCategoryName" asp-for="CategoryName"/>
+
+    <input type="submit" value="Add"/>
+</form>
+
+<h1>Existing categories</h1>
 <div class="categories">
     <table>
         <tr>
@@ -27,23 +35,3 @@
         }
     </table>
 </div>
-
-<form method="post" asp-page-handler="AddCategory" class="categoryManagement__form">
-    <label for="addCategoryName">Name for new category</label>
-    <input type="text" id="addCategoryName" asp-for="CategoryName"/>
-
-    <input type="submit" value="Add"/>
-</form>
-
-<form method="post" asp-page-handler="RenameCategory" class="categoryManagement__form">
-    <label for="renameCategory">Rename category</label>
-    <select id="renameCategory" asp-for="CategoryId">
-        @foreach (var category in Model.Categories)
-        {
-            <option value="@category.Id">@category.Id. @category.Name</option>
-        }
-    </select>
-    <input type="text" asp-for="CategoryName"/>
-
-    <input type="submit" value="Rename"/>
-</form>
