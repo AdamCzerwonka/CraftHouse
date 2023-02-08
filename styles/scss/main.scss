@@ -14,10 +14,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100vh;
 }
 
 .content {
   width: 1300px;
+  height: 100%;
 }
 
 .products {

@@ -1,17 +1,26 @@
 ﻿@page
 @model CraftHouse.Web.Pages.Login
+@{
+    ViewData["styles"] = "login";
+    ViewData["no_render_nav"] = true;
+}
 
-<form method="post">
-    <div>
-        <label for="email">E-mail address</label>
-        <input type="text" id="email" asp-for="Email"/>
-    </div>
+<div class="login">
+    <h1>Login</h1>
+    <form method="post">
+        <div class="login__group">
+            <input class="login__input" type="text" id="email" asp-for="Email"/>
+            <label class="login__label" for="email">E-mail address</label>
+        </div>
+        <div class="login__group">
 
-    <div>
-        <label for="password">Password</label>
-        <input type="password" id="password" asp-for="Password"/>
-    </div>
-    <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl"/>
+        <input class="login__input" type="password" id="password" asp-for="Password"/>
+        <label class="login__label" for="password">Password</label>
 
-    <input type="submit" value="Login"/>
-</form>
+        </div>
+
+        <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl"/>
+
+        <input class="login__submit" type="submit" value="Login"/>
+    </form>
+</div>
