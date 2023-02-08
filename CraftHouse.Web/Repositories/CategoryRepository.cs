@@ -16,6 +16,7 @@ public class CategoryRepository : ICategoryRepository
     public async Task<List<Category>> GetCategoriesAsync(CancellationToken cancellationToken)
     => await _context
         .Categories
+        .AsNoTracking()
         .Where(x => x.DeletedAt == null)
         .ToListAsync(cancellationToken);
 
@@ -47,10 +48,19 @@ public class CategoryRepository : ICategoryRepository
     public async Task<bool> CategoryExistsAsync(string name, CancellationToken cancellationToken)
         => await _context.Categories.AnyAsync(x => x.Name == name, cancellationToken);
 
+    public async Task AddCategoryAsync(Category category, CancellationToken cancellationToken)
+    {
+        category.CreatedAt = DateTime.Now;
+        category.UpdatedAt = DateTime.Now;
+        _context.Categories.Add(category);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task DeleteCategoryAsync(Category category, CancellationToken cancellationToken)
     {
         category.DeletedAt = DateTime.Now;
-        _context.Categories.Remove(category);
+        category.UpdatedAt = DateTime.Now;
+        _context.Categories.Update(category);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
