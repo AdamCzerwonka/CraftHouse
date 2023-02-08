@@ -40,9 +40,9 @@ public class ProductRepository : IProductRepository
 
     public async Task DeleteProductWithOptionsAsync(Product product, CancellationToken cancellationToken)
     {
-        var options = await _optionRepository.GetProductOptionsAsync(product, cancellationToken);
+        var options = await _optionRepository.GetOptionsByProduct(product);
 
-        foreach (var option in options!.Options)
+        foreach (var option in options)
         {
             await _optionRepository.DeleteOptionAsync(option, cancellationToken);
         }

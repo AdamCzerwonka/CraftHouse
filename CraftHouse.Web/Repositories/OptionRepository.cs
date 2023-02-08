@@ -19,10 +19,22 @@ public class OptionRepository : IOptionRepository
          .Include(x => x.Options)
          .FirstOrDefaultAsync(x => x.Id == product.Id, cancellationToken);
 
+    public async Task<List<Option>> GetOptionsByProduct(Product product)
+    {
+        var options = await _context
+            .Options
+            .AsNoTracking()
+            .Where(x => x.Products.Any(product1 => product1.Id == product.Id))
+            .ToListAsync();
+
+        return options;
+    }
+
     public async Task DeleteOptionAsync(Option option, CancellationToken cancellationToken)
     {
         option.UpdatedAt = DateTime.Now;
         option.DeletedAt = DateTime.Now;
+        _context.Options.Update(option);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

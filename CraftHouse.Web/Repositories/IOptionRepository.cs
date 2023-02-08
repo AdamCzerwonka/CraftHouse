@@ -6,4 +6,5 @@ public interface IOptionRepository
 {
     Task<Product?> GetProductOptionsAsync(Product product, CancellationToken cancellationToken);
     Task DeleteOptionAsync(Option option, CancellationToken cancellationToken);
+    Task<List<Option>> GetOptionsByProduct(Product product);
 }
