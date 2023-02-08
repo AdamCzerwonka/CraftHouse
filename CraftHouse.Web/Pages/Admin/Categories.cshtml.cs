@@ -53,7 +53,7 @@ public class CategoryManagement : PageModel
             Name = CategoryName
         };
         
-        await _categoryRepository.UpdateCategoryAsync(category, cancellationToken);
+        await _categoryRepository.AddCategoryAsync(category, cancellationToken);
 
         return Redirect("Categories");
     }
