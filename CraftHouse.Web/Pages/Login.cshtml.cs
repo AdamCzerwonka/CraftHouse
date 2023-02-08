@@ -1,4 +1,4 @@
-﻿using CraftHouse.Web.Data;
+﻿using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,45 +7,48 @@ namespace CraftHouse.Web.Pages;
 
 public class Login : PageModel
 {
-    private readonly AppDbContext _context;
     private readonly IAuthService _authService;
-    private readonly ILogger<Login> _logger;
+    private readonly IUserRepository _userRepository;
 
-    public Login(AppDbContext context, IAuthService authService, ILogger<Login> logger)
+    public Login(IAuthService authService, IUserRepository userRepository)
     {
-        _context = context;
         _authService = authService;
-        _logger = logger;
+        _userRepository = userRepository;
     }
 
     [BindProperty]
-    public string Email { get; set; } = null!;
+    public LoginUserModel LoginUser { get; set; } = new();
 
-    [BindProperty]
-    public string Password { get; set; } = null!;
+    public string? Error { get; set; }
 
-    [BindProperty]
-    public string? ReturnUrl { get; set; }
-
-    public void OnGet([FromQuery]string redirectUrl)
+    public void OnGet([FromQuery] string redirectUrl)
     {
-        ReturnUrl = redirectUrl;
+        LoginUser.ReturnUrl = redirectUrl;
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        var user = _context.Users.FirstOrDefault(u => u.Email == Email);
+        var user = await _userRepository.GetUserByEmailAsync(LoginUser.Email, cancellationToken);
         if (user is null)
         {
-            return RedirectToPage("login");
-        }
-
-        var result = _authService.Login(user, Password);
-        if (!result)
-        {
+            Error = "Provided email and password combination is invalid. Try again!";
             return Page();
         }
 
-        return Redirect(ReturnUrl ?? "/");
+        var result = _authService.Login(user, LoginUser.Password);
+        if (result)
+        {
+            return Redirect(LoginUser.ReturnUrl ?? "/");
+        }
+
+        Error = "Provided email and password combination is invalid. Try again!";
+        return Page();
     }
 }
+
+public class LoginUserModel
+{
+    public string Email { get; init; } = null!;
+    public string Password { get; init; } = null!;
+    public string? ReturnUrl { get; set; }
+};

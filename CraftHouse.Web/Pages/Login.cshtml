@@ -1,25 +1,40 @@
 ﻿@page
 @model CraftHouse.Web.Pages.Login
 @{
+    ViewData["title"] = "Login";
     ViewData["styles"] = "login";
     ViewData["no_render_nav"] = true;
 }
 
 <div class="login">
+    <div class="login__logo">
+        <a asp-page="/Index">Craft House</a>
+    </div>
     <h1>Login</h1>
+    @if (Model.Error is not null)
+    {
+        <div class="login__error">
+            @Model.Error
+        </div>
+    }
     <form method="post">
         <div class="login__group">
-            <input class="login__input" type="text" id="email" asp-for="Email"/>
+            <input class="login__input" type="text" id="email" asp-for="LoginUser.Email"/>
             <label class="login__label" for="email">E-mail address</label>
         </div>
         <div class="login__group">
 
-        <input class="login__input" type="password" id="password" asp-for="Password"/>
-        <label class="login__label" for="password">Password</label>
+            <input class="login__input" type="password" id="password" asp-for="LoginUser.Password"/>
+            <label class="login__label" for="password">Password</label>
 
         </div>
 
-        <input type="hidden" value="@Model.ReturnUrl" asp-for="ReturnUrl"/>
+        <input type="hidden" value="@Model.LoginUser.ReturnUrl" asp-for="LoginUser.ReturnUrl"/>
+        
+        <div class="login__links">
+            <a asp-page="/Registration">Create account</a>
+            <a asp-page="/Registration">Forgot password</a>
+        </div>
 
         <input class="login__submit" type="submit" value="Login"/>
     </form>
