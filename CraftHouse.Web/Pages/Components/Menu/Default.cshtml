@@ -23,7 +23,7 @@
         else
         {
             <li class="nav__item">
-                <a class="nav__link" asp-page="/Account">My account</a>
+                <a class="nav__link" asp-page="/Account/Index">My account</a>
             </li>
             @if (Model.User.UserType is UserType.Administrator or UserType.Worker)
             {
