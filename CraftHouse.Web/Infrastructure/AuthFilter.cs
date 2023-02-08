@@ -1,14 +1,11 @@
 ﻿using System.Reflection;
 using CraftHouse.Web.Services;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CraftHouse.Web.Infrastructure;
 
-public class AuthFilter : IPageFilter
+public class AuthFilter : IAsyncPageFilter
 {
     private readonly ILogger<AuthFilter> _logger;
     private readonly IAuthService _authService;
@@ -19,17 +16,18 @@ public class AuthFilter : IPageFilter
         _authService = authService;
     }
 
-    public void OnPageHandlerSelected(PageHandlerSelectedContext context)
-    {
-    }
+    public Task OnPageHandlerSelectionAsync(PageHandlerSelectedContext context)
+        => Task.CompletedTask;
 
-    public void OnPageHandlerExecuting(PageHandlerExecutingContext context)
+    public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context,
+        PageHandlerExecutionDelegate next)
     {
-        var result = context.HandlerInstance.GetType().GetCustomAttributes().FirstOrDefault(x => x.GetType() == typeof(RequireAuthAttribute));
+        var result = context.HandlerInstance.GetType().GetCustomAttributes()
+            .FirstOrDefault(x => x.GetType() == typeof(RequireAuthAttribute));
 
         if (result is not null)
         {
-            var user = _authService.GetLoggedInUser();
+            var user = await _authService.GetLoggedInUserAsync(default);
             if (user is null)
             {
                 context.Result = new RedirectToPageResult("/login",
@@ -42,12 +40,14 @@ public class AuthFilter : IPageFilter
                 {
                     context.Result = new NotFoundResult();
                 }
+
                 _logger.LogInformation("Allowed user types: {@userTypes}", allowedUserTypes);
+                await next.Invoke();
             }
         }
-    }
-
-    public void OnPageHandlerExecuted(PageHandlerExecutedContext context)
-    {
+        else
+        {
+            await next.Invoke();
+        }
     }
 }

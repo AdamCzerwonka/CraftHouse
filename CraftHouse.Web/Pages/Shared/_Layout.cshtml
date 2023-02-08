@@ -3,14 +3,21 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - CraftHouse.Web</title>
+    <title>@ViewData["title"] - CraftHouse</title>
+    @if (ViewData.ContainsKey("styles"))
+    {
+        <link rel="stylesheet" href="~/css/@(ViewData["styles"]).css"/>
+    }
     <link rel="stylesheet" href="~/css/main.css"/>
     <link rel="stylesheet" href="~/css/nav.css"/>
 </head>
 <body>
+@if (!ViewData.ContainsKey("no_render_nav"))
+{
     @await Component.InvokeAsync("Menu")
-    <main role="main" class="content">
-        @RenderBody()
-    </main>
+}
+<main role="main" class="content">
+    @RenderBody()
+</main>
 </body>
 </html>

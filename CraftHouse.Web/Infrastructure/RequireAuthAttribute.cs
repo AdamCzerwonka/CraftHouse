@@ -1,11 +1,10 @@
 ﻿using CraftHouse.Web.Entities;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CraftHouse.Web.Infrastructure;
 
-public class RequireAuthAttribute:Attribute
+public class RequireAuthAttribute : Attribute
 {
-    public IEnumerable<UserType> AllowedTypes { get; init; }
+    public IEnumerable<UserType> AllowedTypes { get; }
 
     public RequireAuthAttribute(params UserType[] allowedTypes)
     {

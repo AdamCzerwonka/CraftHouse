@@ -3,6 +3,7 @@ using CraftHouse.Web.Entities;
 using CraftHouse.Web.Helpers;
 using CraftHouse.Web.Services;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace CraftHouse.Web.Repositories;
 
@@ -16,27 +17,27 @@ public class UserRepository : IUserRepository
       _context = context;
       _validator = validator;
    }
-   
-   public User? GetUserById(int id)
-   {
-      var user = _context.Users.FirstOrDefault(x => x.Id == id);
-      return user;
-   }
 
-   public User? GetUserByEmail(string email)
-   {
-      var user = _context.Users.FirstOrDefault(x => x.Email == email);
-      return user;
-   }
+   public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+      => await _context
+         .Users
+         .AsNoTracking()
+         .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+   public async Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
+      => await _context
+         .Users
+         .AsNoTracking()
+         .FirstOrDefaultAsync(x => x.Email == email && x.DeletedAt == null, cancellationToken);
 
    public IEnumerable<User> Get()
    {
       return _context.Users.Where(x => x.DeletedAt == null).OrderBy(x => x.Id);
    }
 
-   public async Task<Result> CreateAsync(User user, string password)
+   public async Task<Result> CreateUserAsync(User user, string password, CancellationToken cancellationToken)
    {
-      var validationResult = await _validator.ValidateAsync(user);
+      var validationResult = await _validator.ValidateAsync(user, cancellationToken);
       if (!validationResult.IsValid)
       {
          return new Result
@@ -45,9 +46,9 @@ public class UserRepository : IUserRepository
             Succeeded = false
          };
       }
-      
-      var isUserAlreadyInDb = _context.Users.Any(x => x.Email == user.Email && x.DeletedAt == null);
-      if (isUserAlreadyInDb)
+
+      var isUserAlreadyInDb = await GetUserByEmailAsync(user.Email, cancellationToken);
+      if (isUserAlreadyInDb is not null)
       {
          return new Result
          {
@@ -63,22 +64,36 @@ public class UserRepository : IUserRepository
       user.PasswordSalt = Convert.ToBase64String(passwordSalt);
 
       _context.Users.Add(user);
-      await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync(cancellationToken);
 
       return new Result { Succeeded = true };
    }
 
-   public async Task UpdateUserAsync(User user)
+   public async Task<Result> UpdateUserPasswordAsync(User user, string password, CancellationToken cancellationToken)
+   {
+      var passwordSalt = HashingHelper.CreateSalt();
+      var passwordHash = HashingHelper.HashPassword(password, passwordSalt);
+      
+      user.PasswordHash = Convert.ToBase64String(passwordHash);
+      user.PasswordSalt = Convert.ToBase64String(passwordSalt);
+
+      _context.Users.Update(user);
+      await _context.SaveChangesAsync(cancellationToken);
+
+      return new Result { Succeeded = true };
+   }
+
+   public async Task UpdateUserAsync(User user, CancellationToken cancellationToken = default)
    {
       user.UpdatedAt = DateTime.Now;
       _context.Users.Update(user);
-      await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync(cancellationToken);
    }
 
-   public async Task DeleteUserAsync(User user)
+   public async Task DeleteUserAsync(User user, CancellationToken cancellationToken)
    {
       user.DeletedAt = DateTime.Now;
       _context.Users.Update(user);
-      await _context.SaveChangesAsync();
+      await _context.SaveChangesAsync(cancellationToken);
    }
 }
