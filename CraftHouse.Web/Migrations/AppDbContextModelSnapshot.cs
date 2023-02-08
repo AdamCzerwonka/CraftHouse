@@ -69,10 +69,15 @@ namespace CraftHouse.Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Options");
                 });
@@ -195,19 +200,15 @@ namespace CraftHouse.Web.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("OptionProduct", b =>
+            modelBuilder.Entity("CraftHouse.Web.Entities.Option", b =>
                 {
-                    b.Property<int>("OptionsId")
-                        .HasColumnType("int");
+                    b.HasOne("CraftHouse.Web.Entities.Product", "Product")
+                        .WithMany("Options")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OptionsId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("OptionProduct");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("CraftHouse.Web.Entities.OptionValue", b =>
@@ -232,21 +233,6 @@ namespace CraftHouse.Web.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("OptionProduct", b =>
-                {
-                    b.HasOne("CraftHouse.Web.Entities.Option", null)
-                        .WithMany()
-                        .HasForeignKey("OptionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CraftHouse.Web.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CraftHouse.Web.Entities.Category", b =>
                 {
                     b.Navigation("Products");
@@ -255,6 +241,11 @@ namespace CraftHouse.Web.Migrations
             modelBuilder.Entity("CraftHouse.Web.Entities.Option", b =>
                 {
                     b.Navigation("OptionValues");
+                });
+
+            modelBuilder.Entity("CraftHouse.Web.Entities.Product", b =>
+                {
+                    b.Navigation("Options");
                 });
 #pragma warning restore 612, 618
         }

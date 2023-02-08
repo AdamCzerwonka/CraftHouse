@@ -27,7 +27,8 @@ public class AppDbContext : DbContext
         modelBuilder
             .Entity<Product>()
             .HasMany(x => x.Options)
-            .WithMany(x => x.Products);
+            .WithOne(x => x.Product)
+            .HasForeignKey(x => x.ProductId);
 
         modelBuilder
             .Entity<OptionValue>()
