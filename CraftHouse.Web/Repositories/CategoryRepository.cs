@@ -16,8 +16,8 @@ public class CategoryRepository : ICategoryRepository
     public async Task<List<Category>> GetCategoriesAsync(CancellationToken cancellationToken)
     => await _context
         .Categories
-        .AsNoTracking()
         .Where(x => x.DeletedAt == null)
+        .AsNoTracking()
         .ToListAsync(cancellationToken);
 
     public async Task<Category?> GetCategoryWithProducts(int id, CancellationToken cancellationToken)

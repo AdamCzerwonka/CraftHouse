@@ -86,6 +86,4 @@ public class ProductManagement : PageModel
 
         return Redirect("/admin/Products");
     }
-    
-    
 }

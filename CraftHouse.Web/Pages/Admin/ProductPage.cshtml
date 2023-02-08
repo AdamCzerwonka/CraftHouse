@@ -8,8 +8,7 @@
 <div>EDIT PRODUCT</div>
 <form method="post" asp-page-handler="Edit">
     <input type="hidden" asp-for="ProductId" value="@Model.ProductId"/>
-    <input type="hidden" name="optionNumber" value="@Model.OptionNumber" />
-    
+
     <label for="nameEdit">Name</label>
     <input type="text" id="nameEdit" asp-for="Name"/>
 
