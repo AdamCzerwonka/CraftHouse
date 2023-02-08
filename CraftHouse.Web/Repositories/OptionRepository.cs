@@ -19,15 +19,16 @@ public class OptionRepository : IOptionRepository
          .Include(x => x.Options)
          .FirstOrDefaultAsync(x => x.Id == product.Id, cancellationToken);
 
-    public async Task<List<Option>> GetOptionsByProduct(Product product)
-    {
-        var options = await _context
+    public async Task<List<Option>> GetOptionsByProductAsync(Product product, CancellationToken cancellationToken)
+     => await _context
             .Options
             .AsNoTracking()
-            .Where(x => x.Products.Any(product1 => product1.Id == product.Id))
-            .ToListAsync();
+            .Where(x => x.ProductId == product.Id)
+            .ToListAsync(cancellationToken);
 
-        return options;
+    public Task<bool> IsOptionDeletedAsync(Option option, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(option.DeletedAt != null);
     }
 
     public async Task DeleteOptionAsync(Option option, CancellationToken cancellationToken)
