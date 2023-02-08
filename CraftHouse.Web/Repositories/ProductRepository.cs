@@ -57,4 +57,11 @@ public class ProductRepository : IProductRepository
         _context.Products.Update(product);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
+    {
+        product.UpdatedAt = DateTime.Now;
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
