@@ -17,15 +17,12 @@ public class IndexModel : PageModel
         _authService = authService;
         _context = context;
     }
-
-    public User? LoggedInUser { get; set; }
+    
     public List<Product> Products { get; set; } = null!;
     public int PageNumber { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int pageNumber, CancellationToken cancellationToken)
     {
-        LoggedInUser = await _authService.GetLoggedInUserAsync(cancellationToken);
-
         if (pageNumber <= 0)
         {
             throw new InvalidOperationException("Page does not exists");
