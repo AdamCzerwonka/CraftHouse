@@ -42,6 +42,7 @@ try
     services.AddTransient<ICategoryRepository, CategoryRepository>();
     services.AddTransient<IProductRepository, ProductRepository>();
     services.AddTransient<IOptionRepository, OptionRepository>();
+    services.AddTransient<IOptionValueRepository, OptionValueRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
     services.AddRazorPages().AddMvcOptions(options =>
