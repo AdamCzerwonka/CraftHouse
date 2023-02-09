@@ -1,0 +1,67 @@
+﻿@page "{productId}"
+@model CraftHouse.Web.Pages.Admin.OptionsManagement
+
+<a asp-page="/admin/Products">Return</a>
+
+<br/><br/>
+
+<div>OPTION ADD</div>
+<form method="post" asp-page-handler="Option">
+    <input type="hidden" asp-for="ProductId" value="@Model.ProductId"/>
+    <input type="hidden" asp-for="OptionNumber" value="@Model.OptionNumber"/>
+
+    <label for="name">Name</label>
+    <input type="text" id="name" asp-for="Name"/>
+
+    <br/>
+
+    <label for="maxOccurs">Max occurs</label>
+    <input type="number" id="maxOccurs" asp-for="MaxOccurs" value="1" min="1"/>
+
+    <br/>
+
+    @for (var i = 0; i < @Model.OptionNumber; i++)
+    {
+        <label>Option value</label>
+        <input type="text" class="optionValue" asp-for="OptionValues"/>
+
+        <label>Option price</label>
+        <input type="number" step="0.01" class="optionPrice" asp-for="OptionPrices"/>
+        <br/>
+    }
+    
+    @if (Model.OptionNumber - 1 > 0)
+    {
+        <a asp-page="/admin/OptionsManagement" asp-route-productId="@Model.ProductId" asp-route-optionNumber="@(Model.OptionNumber - 1)">Less options</a>
+    }
+    
+    <a asp-page="/admin/OptionsManagement" asp-route-productId="@Model.ProductId" asp-route-optionNumber="@(Model.OptionNumber + 1)">More options</a>
+
+    <br/>
+    
+    <input type="submit" value="Add option"/>
+</form>
+
+<br/>
+
+<table>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Max occurs</th>
+    <th>Actions</th>
+    @foreach (var option in @Model.ExistingOptions)
+    {
+        <tr>
+            <td>@option.Id</td>
+            <td>@option.Name</td>
+            <td>@option.MaxOccurs</td>
+            <td>
+                <form method="post" asp-page-handler="Remove">
+                    <input type="hidden" value="@option.Id" asp-for="OptionId"/>
+                    <input type="submit" value="Delete"/>
+                </form>
+                <a asp-page="/admin/OptionValuesManagement" asp-route-optionId="@option.Id">Edit</a>
+            </td>
+        </tr>
+    }
+</table>

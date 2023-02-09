@@ -50,6 +50,9 @@ try
     services.AddTransient<IAuthService, AuthService>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<ICategoryRepository, CategoryRepository>();
+    services.AddTransient<IProductRepository, ProductRepository>();
+    services.AddTransient<IOptionRepository, OptionRepository>();
+    services.AddTransient<IOptionValueRepository, OptionValueRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
     services.Configure<RouteOptions>(options =>

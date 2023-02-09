@@ -8,8 +8,7 @@
 <div>EDIT PRODUCT</div>
 <form method="post" asp-page-handler="Edit">
     <input type="hidden" asp-for="ProductId" value="@Model.ProductId"/>
-    <input type="hidden" name="optionNumber" value="@Model.OptionNumber" />
-    
+
     <label for="nameEdit">Name</label>
     <input type="text" id="nameEdit" asp-for="Name"/>
 
@@ -35,36 +34,3 @@
 
     <input type="submit" value="Edit"/>
 </form>
-
-<br/><br/>
-
-<div>OPTION ADD</div>
-<form method="post" asp-page-handler="Option">
-    <input type="hidden" asp-for="ProductId" value="@Model.ProductId"/>
-    <input type="hidden" asp-for="OptionNumber" value="@Model.OptionNumber"/>
-    
-    <label for="name">Name</label>
-    <input type="text" id="name" asp-for="Name"/>
-
-    <br/>
-    @for (var i = 0; i < @Model.OptionNumber; i++)
-    {
-        <label>Option value</label>
-        <input type="text" class="optionValue" asp-for="OptionValues"/>
-
-        <label>Option price</label>
-        <input type="number" step="0.01" class="optionPrice" asp-for="OptionPrices"/>
-        <br/>
-    }
-
-    <input type="submit" value="Add option"/>
-</form>
-
-<br/>
-
-@if (Model.OptionNumber - 1 > 0)
-{
-    <a asp-page="/admin/ProductPage" asp-route-productId="@Model.ProductId" asp-route-optionNumber="@(Model.OptionNumber - 1)">Less options</a>
-}
-
-<a asp-page="/admin/ProductPage" asp-route-productId="@Model.ProductId" asp-route-optionNumber="@(Model.OptionNumber + 1)">More options</a>

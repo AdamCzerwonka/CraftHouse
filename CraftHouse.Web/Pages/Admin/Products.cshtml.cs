@@ -1,6 +1,7 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +11,13 @@ namespace CraftHouse.Web.Pages.Admin;
 [RequireAuth(UserType.Administrator)]
 public class ProductManagement : PageModel
 {
-    private readonly AppDbContext _context;
-    private readonly ILogger _logger;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IProductRepository _productRepository;
 
-    public ProductManagement(AppDbContext context, ILogger<ProductManagement> logger)
+    public ProductManagement(ICategoryRepository categoryRepository, IProductRepository productRepository)
     {
-        _context = context;
-        _logger = logger;
+        _categoryRepository = categoryRepository;
+        _productRepository = productRepository;
     }
 
     [BindProperty]
@@ -41,19 +42,22 @@ public class ProductManagement : PageModel
 
     public List<Product> Products { get; set; } = null!;
 
-    public IActionResult OnGet()
+    public async Task<IActionResult> OnGet(CancellationToken cancellationToken)
     {
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-        Products = _context.Products.Where(x => x.DeletedAt == null).ToList();
+        Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
+        Products = await _productRepository.GetProductsAsync(cancellationToken);
 
         return Page();
     }
 
-    public async Task<RedirectResult> OnPostProductAsync()
+    public async Task<RedirectResult> OnPostProductAsync(CancellationToken cancellationToken)
     {
-        var category = _context.Categories
-            .Where(x => x.DeletedAt == null)
-            .FirstOrDefault(x => x.Id == CategoryId);
+        var category = await _categoryRepository.GetCategoryByIdAsync(CategoryId, cancellationToken);
+
+        if (category is null)
+        {
+            throw new NullReferenceException("Category does not exists");
+        }
 
         var product = new Product()
         {
@@ -61,33 +65,25 @@ public class ProductManagement : PageModel
             IsAvailable = IsAvailable,
             Price = Price,
             Description = Description,
-            Category = category!
+            CategoryId = category.Id
         };
 
-        await _context.Products.AddAsync(product);
-        await _context.SaveChangesAsync();
+        await _productRepository.AddProductAsync(product, cancellationToken);
 
         return Redirect("/admin/Products");
     }
     
-    public async Task<RedirectResult> OnPostRemoveAsync()
+    public async Task<RedirectResult> OnPostRemoveAsync(CancellationToken cancellationToken)
     {
-        var product = _context.Products.Where(x => x.DeletedAt == null).FirstOrDefault(x => x.Id == ProductId);
+        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
         
-        product!.DeletedAt = DateTime.Now;
-        
-        var options = _context.Products.Include(x => x.Options).FirstOrDefault(x => x.Id == ProductId);
-        
-        foreach (var option in options!.Options)
+        if (product is null)
         {
-            option.DeletedAt = DateTime.Now;
+            throw new NullReferenceException("Product does not exists");
         }
 
-        _context.Products.Update(product);
-        await _context.SaveChangesAsync();
+        await _productRepository.DeleteProductWithOptionsAsync(product, cancellationToken);
 
         return Redirect("/admin/Products");
     }
-    
-    
 }

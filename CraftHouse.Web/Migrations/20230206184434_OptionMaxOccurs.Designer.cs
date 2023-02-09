@@ -4,6 +4,7 @@ using CraftHouse.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CraftHouse.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230206184434_OptionMaxOccurs")]
+    partial class OptionMaxOccurs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,15 +72,10 @@ namespace CraftHouse.Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("Options");
                 });
@@ -200,15 +198,19 @@ namespace CraftHouse.Web.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CraftHouse.Web.Entities.Option", b =>
+            modelBuilder.Entity("OptionProduct", b =>
                 {
-                    b.HasOne("CraftHouse.Web.Entities.Product", "Product")
-                        .WithMany("Options")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("OptionsId")
+                        .HasColumnType("int");
 
-                    b.Navigation("Product");
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OptionsId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("OptionProduct");
                 });
 
             modelBuilder.Entity("CraftHouse.Web.Entities.OptionValue", b =>
@@ -233,6 +235,21 @@ namespace CraftHouse.Web.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("OptionProduct", b =>
+                {
+                    b.HasOne("CraftHouse.Web.Entities.Option", null)
+                        .WithMany()
+                        .HasForeignKey("OptionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CraftHouse.Web.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CraftHouse.Web.Entities.Category", b =>
                 {
                     b.Navigation("Products");
@@ -241,11 +258,6 @@ namespace CraftHouse.Web.Migrations
             modelBuilder.Entity("CraftHouse.Web.Entities.Option", b =>
                 {
                     b.Navigation("OptionValues");
-                });
-
-            modelBuilder.Entity("CraftHouse.Web.Entities.Product", b =>
-                {
-                    b.Navigation("Options");
                 });
 #pragma warning restore 612, 618
         }

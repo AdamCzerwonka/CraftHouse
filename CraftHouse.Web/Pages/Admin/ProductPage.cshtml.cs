@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using CraftHouse.Web.Data;
-using CraftHouse.Web.Entities;
+﻿using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -10,11 +9,13 @@ namespace CraftHouse.Web.Pages.Admin;
 [RequireAuth(UserType.Administrator)]
 public class ProductPage : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IProductRepository _productRepository;
 
-    public ProductPage(AppDbContext context)
+    public ProductPage(ICategoryRepository categoryRepository, IProductRepository productRepository)
     {
-        _context = context;
+        _categoryRepository = categoryRepository;
+        _productRepository = productRepository;
     }
 
     [BindProperty]
@@ -37,60 +38,25 @@ public class ProductPage : PageModel
 
     public List<Category> Categories { get; set; } = null!;
 
-    [BindProperty]
-    public List<string> OptionValues { get; set; } = null!;
-
-    [BindProperty]
-    public List<float> OptionPrices { get; set; } = null!;
-
-    public int OptionNumber { get; set; }
-
-    public void OnGet(int productId, int optionNumber)
+    public async Task OnGet(int productId, CancellationToken cancellationToken)
     {
-        OptionNumber = optionNumber;
+        Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
         ProductId = productId;
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
     }
 
-    public async Task<IActionResult> OnPostEditAsync(int optionNumber)
+    public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
     {
-        OptionNumber = optionNumber;
-
-        var product = _context.Products
-            .Where(x => x.DeletedAt == null)
-            .FirstOrDefault(x => x.Id == ProductId)!;
-        var category = _context.Categories
-            .Where(x => x.DeletedAt == null)
-            .FirstOrDefault(x => x.Id == CategoryId);
+        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        var category = await _categoryRepository.GetCategoryByIdAsync(CategoryId, cancellationToken);
 
         product!.Name = Name;
         product.IsAvailable = IsAvailable;
         product.Price = Price;
         product.Description = Description;
-        product.Category = category!;
+        product.CategoryId = category!.Id;
 
-        _context.Update(product);
-        await _context.SaveChangesAsync();
+        await _productRepository.UpdateProductAsync(product, cancellationToken);
 
-        return Redirect($"/admin/ProductPage/{ProductId}?optionNumber={OptionNumber}");
-    }
-
-    public async Task<IActionResult> OnPostOptionAsync()
-    {
-        var product = _context.Products.FirstOrDefault(x => x.Id == ProductId);
-
-        ICollection<OptionValue> optionValues = OptionValues.Select((t, i) => new OptionValue() { Value = t, Price = OptionPrices[i] }).ToList();
-
-        var option = new Option()
-        {
-            Name = Name,
-            OptionValues = optionValues,
-            Products = new[] { product! }
-        };
-
-        await _context.Options.AddAsync(option);
-        await _context.SaveChangesAsync();
-
-        return Redirect($"/admin/ProductPage/{ProductId}?optionNumber={1}");
+        return Redirect($"/admin/ProductPage/{ProductId}");
     }
 }

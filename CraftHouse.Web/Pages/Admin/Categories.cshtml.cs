@@ -1,6 +1,7 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,16 +10,13 @@ namespace CraftHouse.Web.Pages.Admin;
 [RequireAuth(UserType.Administrator)]
 public class CategoryManagement : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryManagement(AppDbContext context)
+    public CategoryManagement(ICategoryRepository categoryRepository)
     {
-        _context = context;
+        _categoryRepository = categoryRepository;
     }
-
-    [BindProperty]
-    public int CategoryId { get; set; }
-
+    
     public List<Category> Categories { get; set; } = null!;
 
     public string? Error { get; set; }
@@ -26,43 +24,18 @@ public class CategoryManagement : PageModel
     [BindProperty]
     public string CategoryName { get; set; } = null!;
 
-    private bool CategoryExists(string name)
-        => _context.Categories.Any(x => x.Name == name);
-
-    public void OnGet()
+    public async Task<IActionResult> OnGet(CancellationToken cancellationToken)
     {
-        Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+        Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
+
+        return Page();
     }
-
-    public async Task<IActionResult> OnPostDeleteCategoryAsync()
+    
+    public async Task<IActionResult> OnPostAddCategoryAsync(CancellationToken cancellationToken)
     {
-        var containsProducts =
-            _context.Products.Any(product => product.CategoryId == CategoryId && product.DeletedAt == null);
-
-        var category = _context.Categories.FirstOrDefault(x => x.Id == CategoryId);
-
-        if (containsProducts || category == null)
-        {
-            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-            Error =
-                category == null
-                    ? "This category does not exists"
-                    : "You can not delete category when any product is in it";
-            
-            return Page();
-        }
-
-        category.DeletedAt = DateTime.Now;
-
-        _context.Categories.Update(category);
-        await _context.SaveChangesAsync();
+        var isCategoryExisting = await _categoryRepository.CategoryExistsAsync(CategoryName, cancellationToken);
         
-        return Redirect("Categories");
-    }
-
-    public async Task<IActionResult> OnPostAddCategoryAsync()
-    {
-        if (CategoryName.Length < 3 || CategoryExists(CategoryName))
+        if (CategoryName.Length < 3 || isCategoryExisting)
         {
             Error = "That named category already exits";
             if (CategoryName.Length < 3)
@@ -70,7 +43,7 @@ public class CategoryManagement : PageModel
                 Error = "Incorrect category name";
             }
 
-            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
+            Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
             CategoryName = "";
             return Page();
         }
@@ -79,39 +52,8 @@ public class CategoryManagement : PageModel
         {
             Name = CategoryName
         };
-
-        await _context.Categories.AddAsync(category);
-        await _context.SaveChangesAsync();
-
-        return Redirect("Categories");
-    }
-
-    public async Task<IActionResult> OnPostRenameCategoryAsync()
-    {
-        if (CategoryName.Length < 3 || CategoryExists(CategoryName))
-        {
-            Error = "That named category already exits";
-            if (CategoryName.Length < 3)
-            {
-                Error = "Incorrect category name";
-            }
-
-            Categories = _context.Categories.Where(x => x.DeletedAt == null).ToList();
-            CategoryName = "";
-            return Page();
-        }
-
-        var category = _context.Categories.FirstOrDefault(x => x.Id == CategoryId);
-
-        if (category == null)
-        {
-            Error = "This category does not exists";
-            return Page();
-        }
-
-        category.Name = CategoryName;
-        _context.Categories.Update(category);
-        await _context.SaveChangesAsync();
+        
+        await _categoryRepository.AddCategoryAsync(category, cancellationToken);
 
         return Redirect("Categories");
     }
