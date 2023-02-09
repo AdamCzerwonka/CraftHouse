@@ -1,7 +1,5 @@
 ﻿using CraftHouse.Web.DTOs;
-using CraftHouse.Web.Entities;
 using CraftHouse.Web.Repositories;
-using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -25,7 +23,7 @@ public class Registration : PageModel
     {
     }
 
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
         var user = UserRegister.MapToUser();
 
@@ -34,7 +32,7 @@ public class Registration : PageModel
             ValidationErrors = new List<string> { "Passwords do not match" };
         }
 
-        var result = await _userRepository.CreateAsync(user, UserRegister.Password);
+        var result = await _userRepository.CreateUserAsync(user, UserRegister.Password, cancellationToken);
         if (result.Succeeded)
         {
             return RedirectToPage("/Index");

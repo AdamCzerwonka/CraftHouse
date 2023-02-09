@@ -1,10 +1,12 @@
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Options;
 using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using CraftHouse.Web.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Events;
 
@@ -24,12 +26,20 @@ try
     });
 
     var services = builder.Services;
-    var configuration = builder.Configuration;
+    
+    services.ConfigureOptions<DatabaseOptionSetup>();
 
-    services.AddDbContext<AppDbContext>(options =>
+    services.AddDbContext<AppDbContext>((serviceProvider, options)=>
     {
-        options.UseSqlServer(configuration.GetConnectionString("dev"));
-        options.EnableSensitiveDataLogging();
+        var databaseOptions = serviceProvider.GetService<IOptions<DatabaseOptions>>()!.Value;
+        
+        options.UseSqlServer(databaseOptions.ConnectionString, sqlServerAction =>
+        {
+            sqlServerAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
+            sqlServerAction.CommandTimeout(databaseOptions.CommandTimeout);
+        });
+        options.EnableDetailedErrors(databaseOptions.EnableDetailedErrors);
+        options.EnableSensitiveDataLogging(databaseOptions.EnableSensitiveDataLogging);
     });
 
     services.AddSession(options => { options.Cookie.Name = "SessionID"; });
@@ -44,6 +54,12 @@ try
     services.AddTransient<IOptionRepository, OptionRepository>();
     services.AddTransient<IOptionValueRepository, OptionValueRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
+
+    services.Configure<RouteOptions>(options =>
+    {
+        options.LowercaseUrls = true;
+        options.LowercaseQueryStrings = true;
+    });
 
     services.AddRazorPages().AddMvcOptions(options =>
     {

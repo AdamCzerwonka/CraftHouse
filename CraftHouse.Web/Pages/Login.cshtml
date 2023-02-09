@@ -1,0 +1,39 @@
+﻿@page
+@model CraftHouse.Web.Pages.Login
+@{
+    ViewData["title"] = "Login";
+    ViewData["styles"] = "login";
+    ViewData["no_render_nav"] = true;
+}
+
+<div class="container">
+    <div class="logo">
+        <a asp-page="/Index">Craft House</a>
+    </div>
+    <h1>Login</h1>
+    @if (Model.Error is not null)
+    {
+        <div class="login__error">
+            @Model.Error
+        </div>
+    }
+    <form method="post">
+        <div class="form__group">
+            <input class="form__input" type="text" id="email" asp-for="LoginUser.Email"/>
+            <label class="form__label" for="email">E-mail address</label>
+        </div>
+        <div class="form__group">
+            <input class="form__input" type="password" id="password" asp-for="LoginUser.Password"/>
+            <label class="form__label" for="password">Password</label>
+        </div>
+
+        <input type="hidden" value="@Model.LoginUser.ReturnUrl" asp-for="LoginUser.ReturnUrl"/>
+        
+        <div class="form__links">
+            <a asp-page="/Registration">Create account</a>
+            <a asp-page="/Registration">Forgot password</a>
+        </div>
+
+        <input class="form__submit" type="submit" value="Login"/>
+    </form>
+</div>
