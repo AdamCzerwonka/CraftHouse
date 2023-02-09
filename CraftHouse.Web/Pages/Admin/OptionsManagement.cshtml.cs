@@ -1,6 +1,7 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,13 @@ namespace CraftHouse.Web.Pages.Admin;
 [RequireAuth(UserType.Administrator)]
 public class OptionsManagement : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly IOptionRepository _optionRepository;
+    private readonly IProductRepository _productRepository;
 
-    public OptionsManagement (AppDbContext context)
+    public OptionsManagement (IOptionRepository optionRepository, IProductRepository productRepository)
     {
-        _context = context;
+        _optionRepository = optionRepository;
+        _productRepository = productRepository;
     }
     
     [BindProperty]
@@ -39,17 +42,22 @@ public class OptionsManagement : PageModel
 
     public int OptionNumber { get; set; }
 
-    public void OnGet(int productId, int optionNumber)
+    public async Task OnGet(int productId, int optionNumber, CancellationToken cancellationToken)
     {
         OptionNumber = optionNumber;
         ProductId = productId;
-        ExistingOptions = _context.Options.Where(x => x.Products.Any(x => x.Id == ProductId)).Where(x => x.DeletedAt == null).ToList();
+        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
     }
     
-    public async Task<IActionResult> OnPostOptionAsync()
+    public async Task<IActionResult> OnPostOptionAsync(CancellationToken cancellationToken)
     {
-        var product = _context.Products.FirstOrDefault(x => x.Id == ProductId);
-
+        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        
+        if (product is null)
+        {
+            throw new NullReferenceException("Product does not exists");
+        }
+        
         ICollection<OptionValue> optionValues = OptionValues.Select((t, i) => new OptionValue() { Value = t, Price = OptionPrices[i] }).ToList();
 
         var option = new Option()
@@ -57,29 +65,25 @@ public class OptionsManagement : PageModel
             Name = Name,
             MaxOccurs = MaxOccurs,
             OptionValues = optionValues,
-            Products = new[] { product! }
+            ProductId = product.Id 
         };
 
-        await _context.Options.AddAsync(option);
-        await _context.SaveChangesAsync();
+        await _optionRepository.AddOptionAsync(option, cancellationToken);
 
         return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
     }
 
-    public async Task<IActionResult> OnPostRemoveAsync()
+    public async Task<IActionResult> OnPostRemoveAsync(CancellationToken cancellationToken)
     {
-        ExistingOptions = _context.Options.Where(x => x.Products.Any(x => x.Id == ProductId)).Where(x => x.DeletedAt == null).ToList();
+        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
 
         foreach (var option in ExistingOptions)
         {
-            if (option.Id != OptionId) continue;
-            option.UpdatedAt = DateTime.Now;
-            option.DeletedAt = DateTime.Now;
-            _context.Options.Update(option);
+            var isDeleted = await _optionRepository.IsOptionDeletedAsync(option, cancellationToken);
+            if (option.Id != OptionId || isDeleted) continue;
+            await _optionRepository.DeleteOptionAsync(option, cancellationToken);
             break;
         }
-        
-        await _context.SaveChangesAsync();
         
         return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
     }

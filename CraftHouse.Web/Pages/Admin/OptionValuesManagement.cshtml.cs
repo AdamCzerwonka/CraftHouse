@@ -1,6 +1,7 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,11 +10,13 @@ namespace CraftHouse.Web.Pages.Admin;
 [RequireAuth(UserType.Administrator)]
 public class OptionValuesManagement : PageModel
 {
-    private readonly AppDbContext _context;
+    private readonly IOptionValueRepository _optionValueRepository;
+    private readonly IOptionRepository _optionRepository;
 
-    public OptionValuesManagement(AppDbContext context)
+    public OptionValuesManagement(IOptionValueRepository optionValueRepository, IOptionRepository optionRepository)
     {
-        _context = context;
+        _optionValueRepository = optionValueRepository;
+        _optionRepository = optionRepository;
     }
     
     [BindProperty]
@@ -35,82 +38,84 @@ public class OptionValuesManagement : PageModel
     public string OptionName { get; set; } = null!;
 
     public List<OptionValue> OptionValues { get; set; } = null!;
-
-
-
-    public void OnGet(int optionId)
+    
+    public async Task OnGet(int optionId, CancellationToken cancellationToken)
     {
         OptionId = optionId;
-        OptionValues = _context.OptionValues.Where(x => x.OptionId == OptionId).ToList();
-        OptionName = _context.Options.FirstOrDefault(x => x.Id == OptionId)!.Name;
+        var option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+        
+        if (option is null)
+        {
+            throw new NullReferenceException("Option does not exists");
+        }
+        
+        OptionValues = await _optionValueRepository.GetOptionValuesByOptionIdAsync(OptionId, cancellationToken);
+        OptionName = option!.Name;
     }
 
-    public async Task<IActionResult> OnPostRemoveAsync()
+    public async Task<IActionResult> OnPostRemoveAsync(CancellationToken cancellationToken)
     {
-        OptionValues = _context.OptionValues.Where(x => x.OptionId == OptionId).ToList();
-
-        foreach (var option in OptionValues)      
+        var optionValueToDelete = await _optionValueRepository.GetOptionValueAsync(OptionId, OptionValue, cancellationToken);
+        
+        if (optionValueToDelete is null)
         {
-            if (option.OptionId == OptionId && option.Value == OptionValue)
-            {
-                _context.OptionValues.Remove(option);
-            }
+            throw new NullReferenceException("Option value does not exists");
         }
-
-        await _context.SaveChangesAsync();
-
+        await _optionValueRepository.RemoveOptionValueAsync(OptionId, OptionValue, cancellationToken);
+        
         return Redirect($"/admin/OptionValuesManagement/{OptionId}");
     }
     
-    public async Task<IActionResult> OnPostOptionNameAsync()
+    public async Task<IActionResult> OnPostOptionNameAsync(CancellationToken cancellationToken)
     {
-        var option = _context.Options.FirstOrDefault(x => x.Id == OptionId);
+        var option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
 
+        if (option is null)
+        {
+            throw new NullReferenceException("Option does not exists");
+        }
+        
         option!.Name = OptionName;
 
-        _context.Options.Update(option);
-        await _context.SaveChangesAsync();
-
-        return Redirect($"/admin/OptionValuesManagement/{OptionId}");
-    }
-    
-    public async Task<IActionResult> OnPostNewValueAsync()
-    {
-        var option = _context.Options.FirstOrDefault(x => x.Id == OptionId);
-
-        var newValue = new OptionValue()
-        {
-            Value = OptionValue,
-            Price = OptionPrice,
-            Option = option!
-        };
-
-        await _context.OptionValues.AddAsync(newValue);
-        await _context.SaveChangesAsync();
-
-        return Redirect($"/admin/OptionValuesManagement/{OptionId}");
-    }
-    
-    public async Task<IActionResult> OnPostUpdateValueAsync()
-    {
-        var value = _context.OptionValues.FirstOrDefault(x => x.OptionId == OptionId && x.Value == OldOptionValue);
-
-        _context.OptionValues.Remove(value!);
-
-        var option = _context.Options.FirstOrDefault(x => x.Id == OptionId);
-
-        var newValue = new OptionValue()
-        {
-            Value = OptionValue,
-            Price = OptionPrice,
-            Option = option!
-        };
+        await _optionRepository.UpdateOptionAsync(option, cancellationToken);
         
-        await _context.OptionValues.AddAsync(newValue);
-        await _context.SaveChangesAsync();
+        return Redirect($"/admin/OptionValuesManagement/{OptionId}");
+    }
+    
+    public async Task<IActionResult> OnPostNewValueAsync(CancellationToken cancellationToken)
+    {
+        var option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+        
+        if (option is null)
+        {
+            throw new NullReferenceException("Option does not exists");
+        }
+
+        var newValue = new OptionValue()
+        {
+            Value = OptionValue,
+            Price = OptionPrice,
+            OptionId = option.Id
+        };
+
+        await _optionValueRepository.AddNewOptionValueAsync(newValue, cancellationToken);
 
         return Redirect($"/admin/OptionValuesManagement/{OptionId}");
     }
+    
+    public async Task<IActionResult> OnPostUpdateValueAsync(CancellationToken cancellationToken)
+    {
+        var value = await _optionValueRepository.GetOptionValueAsync(OptionId, OldOptionValue, cancellationToken);
+        
+        if (value is null)
+        {
+            throw new NullReferenceException("Option value does not exists");
+        }
 
+        await _optionValueRepository.UpdateOptionValueFieldsAsync(OptionId, OldOptionValue, OptionValue, OptionPrice,
+            cancellationToken);
 
+        return Redirect($"/admin/OptionValuesManagement/{OptionId}");
+    }
+    
 }
