@@ -46,7 +46,7 @@ public class IndexModel : PageModel
 
         ViewData["lastPageNumber"] = 1 + productCount / productsPerPage;
 
-        if (Products.Count == 0)
+        if (Products.Count == 0 && pageNumber > 1)
         {
             throw new InvalidOperationException("Page does not exists");
         }
