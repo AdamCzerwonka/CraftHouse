@@ -12,9 +12,9 @@ public class OptionRepository : IOptionRepository
     {
         _context = context;
     }
-    
+
     public async Task<Product?> GetProductOptionsAsync(Product product, CancellationToken cancellationToken)
-     => await _context
+        => await _context
          .Products
          .Include(x => x.Options)
          .FirstOrDefaultAsync(x => x.Id == product.Id, cancellationToken);
@@ -47,9 +47,16 @@ public class OptionRepository : IOptionRepository
             .Where(x => x.ProductId == productId && x.DeletedAt == null)
             .ToListAsync(cancellationToken);
 
-    public Task<bool> IsOptionDeletedAsync(Option option, CancellationToken cancellationToken)
+    public async Task<bool> IsOptionDeletedAsync(Option option, CancellationToken cancellationToken)
     {
-        return Task.FromResult(option.DeletedAt != null);
+        var toCheck = await GetOptionByIdAsync(option.Id, cancellationToken);
+
+        if (toCheck is null)
+        {
+            throw new NullReferenceException("Option does not exists");
+        }
+        
+        return await Task.FromResult(toCheck.DeletedAt != null);
     }
 
     public async Task UpdateOptionAsync(Option option, CancellationToken cancellationToken)
