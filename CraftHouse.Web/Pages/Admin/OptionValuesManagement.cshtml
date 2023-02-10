@@ -1,11 +1,13 @@
 ﻿@page "{optionId}"
 @model CraftHouse.Web.Pages.Admin.OptionValuesManagement
 
+<a asp-page="/admin/OptionsManagement" asp-route-productId="@Model.Option.ProductId" asp-route-optionNumber="1">Return</a>
+
 <br/><br/>
 
 <form method="post" asp-page-handler="OptionName">
     <label>Name</label>
-    <input type="text" value="@Model.OptionName" asp-for="OptionName"/>
+    <input type="text" value="@Model.Option.Name" asp-for="OptionName"/>
     <input type="submit" value="Change"/>
 </form>
 
