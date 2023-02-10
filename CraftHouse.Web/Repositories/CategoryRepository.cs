@@ -52,7 +52,7 @@ public class CategoryRepository : ICategoryRepository
     {
         category.CreatedAt = DateTime.Now;
         category.UpdatedAt = DateTime.Now;
-        await _context.Categories.AddAsync(category, cancellationToken);
+        _context.Categories.Add(category);
         await _context.SaveChangesAsync(cancellationToken);
     }
 

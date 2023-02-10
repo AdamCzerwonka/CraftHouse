@@ -29,7 +29,7 @@ public class OptionRepository : IOptionRepository
     {
         option.CreatedAt = DateTime.Now;
         option.UpdatedAt = DateTime.Now;
-        await _context.Options.AddAsync(option, cancellationToken);
+        _context.Options.Add(option);
         await _context.SaveChangesAsync(cancellationToken);
     }
 

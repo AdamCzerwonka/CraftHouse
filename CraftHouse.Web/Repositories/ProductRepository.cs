@@ -34,7 +34,7 @@ public class ProductRepository : IProductRepository
     {
         product.CreatedAt = DateTime.Now;
         product.UpdatedAt = DateTime.Now;
-        await _context.Products.AddAsync(product, cancellationToken);
+        _context.Products.Add(product);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
