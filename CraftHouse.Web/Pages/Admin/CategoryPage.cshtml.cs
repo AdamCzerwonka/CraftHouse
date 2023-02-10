@@ -1,5 +1,6 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
+using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CraftHouse.Web.Pages.Admin;
 
+[RequireAuth(UserType.Administrator)]
 public class CategoryPage : PageModel
 {
     private readonly ICategoryRepository _categoryRepository;
