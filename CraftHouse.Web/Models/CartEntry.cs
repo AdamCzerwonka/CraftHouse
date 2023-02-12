@@ -2,6 +2,7 @@
 
 public class CartEntry
 {
+    public Guid Id { get; set; } = Guid.NewGuid();
     public int ProductId { get; init; }
     public IEnumerable<CartEntryOption>? Options { get; init; }
 }

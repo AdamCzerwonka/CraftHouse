@@ -1,8 +1,8 @@
 ﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace CraftHouse.Web.Pages.Cart;
 
@@ -40,6 +40,7 @@ public class Index : PageModel
 
             var cartProduct = new CartEntryProduct()
             {
+                EntryId = entry.Id,
                 Name = product.Name,
                 BasePrice = product.Price,
                 TotalPrice = product.Price
@@ -69,7 +70,7 @@ public class Index : PageModel
                             Price = value.Price
                         };
                     }).ToList();
-                    
+
                     cartProduct.TotalPrice += mappedValues.Sum(x => x.Price);
 
                     var cartOption = new CartOption()
@@ -88,13 +89,27 @@ public class Index : PageModel
 
         CartEntries = cartProducts;
     }
+
+    [BindProperty]
+    public DeleteEntryModel DeleteEntry { get; set; } = null!;
+
+    public IActionResult OnPostDelete()
+    {
+        var id = Guid.Parse(DeleteEntry.EntryId);
+        _cartService.RemoveCartEntry(id);
+
+        return Redirect("/cart");
+    }
 }
+
+public record DeleteEntryModel(string EntryId);
 
 public class CartEntryProduct
 {
+    public Guid EntryId { get; init; }
     public string Name { get; init; } = null!;
     public float BasePrice { get; init; }
-    
+
     public float TotalPrice { get; set; }
 
     public List<CartOption> Options { get; } = new();

@@ -24,4 +24,17 @@ public class CartService : ICartService
 
     public IEnumerable<CartEntry> GetCartEntries()
         => _session.GetFromJson<List<CartEntry>>(SessionCartKey);
+
+    public void RemoveCartEntry(Guid entryId)
+    {
+        var cart = _session.GetFromJson<List<CartEntry>>(SessionCartKey);
+        var entryToDel = cart.FirstOrDefault(x => x.Id == entryId);
+        if (entryToDel is null)
+        {
+            return;
+        }
+        cart.Remove(entryToDel);
+        
+        _session.SetAsJson(SessionCartKey, cart);
+    }
 }

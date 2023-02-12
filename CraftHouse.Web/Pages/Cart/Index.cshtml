@@ -18,5 +18,9 @@
     }
 
     <p>Price: @entry.TotalPrice</p>
+    <form method="post" asp-page-handler="delete">
+        <input type="hidden" value="@entry.EntryId" asp-for="DeleteEntry.EntryId"/> 
+        <input type="submit" value="Delete"/>
+    </form>
     <hr/>
 }
