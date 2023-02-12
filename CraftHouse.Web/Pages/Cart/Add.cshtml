@@ -1,0 +1,31 @@
+﻿@page "{productId:int}"
+@model CraftHouse.Web.Pages.Cart.Add
+
+<h1>Add @Model.Product.Id</h1>
+
+<p>@Model.Product.Name</p>
+<p>@Model.Product.Price</p>
+
+<h2>Options</h2>
+<form method="post">
+    <input type="hidden" value="@Model.Product.Id" asp-for="AddToCart.ProductId"/>
+    @for (var i = 0; i < Model.Options.Count; i++)
+    {
+        var option = Model.Options[i];
+        var index = i;
+        <input type="hidden" value="@option.Id" asp-for="AddToCart.Options[index].OptionId"/>
+        <h3>@option.Name</h3>
+        <p>Pick: @option.MaxOccurs</p>
+        <p>Required: @option.Required</p>
+                                                  
+        foreach (var value in option.OptionValues)
+        {
+            <label>
+                @value.Value
+                <input type="checkbox" value="@value.Id" Name="AddToCart.Options[@index].Values"/>
+            </label>
+        }
+    }
+
+    <input type="submit" value="Add"/>
+</form>
