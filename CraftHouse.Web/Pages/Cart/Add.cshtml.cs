@@ -117,7 +117,7 @@ public class Add : PageModel
         
         _cartService.AddCartEntry(entry);
 
-        return Redirect("/cart/add/" + AddToCart.ProductId);
+        return Redirect("/cart");
     }
 }
 
