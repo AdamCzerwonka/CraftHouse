@@ -7,4 +7,12 @@
 {
     <p>@entry.Name</p>
     <p>@entry.Price</p>
+    @foreach (var opt in entry.Options)
+    {
+        <p>@opt.Name</p>
+        @foreach (var value in opt.Values)
+        {
+            <p>@value.Name - @value.Price</p>
+        }
+    }
 }
