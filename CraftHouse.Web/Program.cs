@@ -45,7 +45,7 @@ try
     services.AddSession(options => { options.Cookie.Name = "SessionID"; });
     services.AddMemoryCache();
 
-    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    services.AddHttpContextAccessor();
 
     services.AddTransient<IAuthService, AuthService>();
     services.AddTransient<IUserRepository, UserRepository>();
@@ -53,6 +53,7 @@ try
     services.AddTransient<IProductRepository, ProductRepository>();
     services.AddTransient<IOptionRepository, OptionRepository>();
     services.AddTransient<IOptionValueRepository, OptionValueRepository>();
+    services.AddTransient<ICartService, CartService>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
     services.Configure<RouteOptions>(options =>
@@ -78,10 +79,9 @@ try
     app.UseHttpsRedirection();
     app.UseStaticFiles();
 
-    app.UseSession();
-
     app.UseRouting();
 
+    app.UseSession();
     app.UseAuthorization();
 
     app.MapRazorPages();
