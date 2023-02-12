@@ -68,45 +68,50 @@ public class Add : PageModel
             .Where(x => x.ProductId == AddToCart.ProductId && x.DeletedAt == null)
             .ToListAsync(cancellationToken);
 
-        var cartOptions = new List<CartEntryOption>();
-        
-        foreach (var opt in AddToCart.Options)
+        List<CartEntryOption>? cartOptions = null;
+
+        if (optionsInDb.Count != 0)
         {
-            var option = optionsInDb.FirstOrDefault(x => x.Id == opt.OptionId);
-            if (option is null)
+            cartOptions = new List<CartEntryOption>();
+            foreach (var opt in AddToCart.Options)
             {
-                throw new InvalidOperationException("Option does not exits");
-            }
-
-            var valuesCount = opt.Values.Count;
-
-            if (option.Required && valuesCount == 0)
-            {
-                _logger.LogInformation("Option required but value was not specified");
-                throw new InvalidOperationException("Option required");
-            }
-
-            if (option.MaxOccurs < valuesCount)
-            {
-                _logger.LogError("Option max occurrences were exceeded");
-                throw new InvalidOperationException("Too much values");
-            }
-
-            var cartOption = new CartEntryOption()
-            {
-                OptionId = option.Id
-            };
-            
-            foreach (var val in opt.Values.Select(value => option.OptionValues.FirstOrDefault(x => x.Id == value)))
-            {
-                if (val is null)
+                var option = optionsInDb.FirstOrDefault(x => x.Id == opt.OptionId);
+                if (option is null)
                 {
-                    throw new InvalidOperationException("OptionValue does not exits");
+                    throw new InvalidOperationException("Option does not exits");
                 }
-                cartOption.Options.Add(val.Id);
+
+                var valuesCount = opt.Values.Count;
+
+                if (option.Required && valuesCount == 0)
+                {
+                    _logger.LogInformation("Option required but value was not specified");
+                    throw new InvalidOperationException("Option required");
+                }
+
+                if (option.MaxOccurs < valuesCount)
+                {
+                    _logger.LogError("Option max occurrences were exceeded");
+                    throw new InvalidOperationException("Too much values");
+                }
+
+                var cartOption = new CartEntryOption()
+                {
+                    OptionId = option.Id
+                };
+
+                foreach (var val in opt.Values.Select(value => option.OptionValues.FirstOrDefault(x => x.Id == value)))
+                {
+                    if (val is null)
+                    {
+                        throw new InvalidOperationException("OptionValue does not exits");
+                    }
+
+                    cartOption.Options.Add(val.Id);
+                }
+                
+                cartOptions.Add(cartOption);
             }
-            
-            cartOptions.Add(cartOption);
         }
 
         var entry = new CartEntry()

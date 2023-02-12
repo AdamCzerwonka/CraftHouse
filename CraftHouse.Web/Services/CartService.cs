@@ -47,7 +47,7 @@ public class CartService : ICartService
 public class CartEntry
 {
     public int ProductId { get; set; }
-    public IEnumerable<CartEntryOption> Options { get; set; } = null!;
+    public IEnumerable<CartEntryOption>? Options { get; set; } = null!;
 }
 
 public class CartEntryOption
