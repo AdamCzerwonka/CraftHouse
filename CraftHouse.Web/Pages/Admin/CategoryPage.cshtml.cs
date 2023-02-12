@@ -1,7 +1,10 @@
-﻿using CraftHouse.Web.Data;
+﻿using Azure.Core;
+using CraftHouse.Web.Data;
+using CraftHouse.Web.DTOs;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +15,12 @@ namespace CraftHouse.Web.Pages.Admin;
 public class CategoryPage : PageModel
 {
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IValidator<Category> _validator;
 
-    public CategoryPage(ICategoryRepository categoryRepository)
+    public CategoryPage(ICategoryRepository categoryRepository, IValidator<Category> validator)
     {
         _categoryRepository = categoryRepository;
+        _validator = validator;
     }
 
     public Category? Category { get; set; }
@@ -25,6 +30,8 @@ public class CategoryPage : PageModel
 
     [BindProperty]
     public CategoryUpdateModel CategoryUpdate { get; set; } = null!;
+    
+    public string? Error { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int id, CancellationToken cancellationToken)
     {
@@ -74,7 +81,21 @@ public class CategoryPage : PageModel
             throw new InvalidOperationException("Category name is taken");
         }
 
+        var categoryDto = new CategoryDto
+        {
+            Name = CategoryUpdate.Name
+        };
+        var toCheck = categoryDto.MapToCategory();
+        var validationResult = await _validator.ValidateAsync(toCheck, cancellationToken);
+
+        if (!validationResult.IsValid)
+        {
+            Error = validationResult.Errors.First().ToString();
+            Category = await _categoryRepository.GetCategoryWithProducts(category.Id, cancellationToken);
+            return Page();
+        }
         category.Name = CategoryUpdate.Name;
+        
         await _categoryRepository.UpdateCategoryAsync(category, cancellationToken);
 
         return Redirect("/admin/category/" + category.Id);

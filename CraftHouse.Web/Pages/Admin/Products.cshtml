@@ -1,25 +1,33 @@
 ﻿@page
 @model ProductManagement
 
+@if (Model.Errors != null)
+{
+    @foreach (var error in @Model.Errors)
+    {
+    <div class="error">@error</div>
+    }
+}
+
 <div>PRODUCT ADD</div>
 <form method="post" asp-page-handler="Product">
     <label for="name">Name</label>
-    <input type="text" id="name" asp-for="Name"/>
+    <input type="text" id="name" asp-for="@Model.ProductDto.Name"/>
 
     <label for="isAvailable">Is available</label>
-    <select id="isAvailable" asp-for="IsAvailable">
+    <select id="isAvailable" asp-for="@Model.ProductDto.IsAvailable">
         <option value="true">available</option>
         <option value="false">unavailable</option>
     </select>
 
     <label for="price">Price</label>
-    <input type="number" step="0.01" id="price" asp-for="Price"/>
+    <input type="number" step="0.01" id="price" asp-for="@Model.ProductDto.Price"/>
 
     <label for="description">Description</label>
-    <input type="text" id="description" asp-for="Description"/>
+    <input type="text" id="description" asp-for="@Model.ProductDto.Description"/>
 
     <label for="categoryId">Category name</label>
-    <select id="categoryId" asp-for="CategoryId">
+    <select id="categoryId" asp-for="@Model.ProductDto.CategoryId">
         @foreach (var category in Model.Categories)
         {
             <option value="@category.Id">@category.Name</option>
