@@ -1,5 +1,4 @@
-﻿using CraftHouse.Web.Data;
-using CraftHouse.Web.Entities;
+﻿using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +22,6 @@ public class OptionValuesManagement : PageModel
     public int OptionId { get; set; }
     
     [BindProperty]
-    public int ProductId { get; set; }
-
-    [BindProperty]
     public string OptionValue { get; set; } = null!;
     
     [BindProperty]
@@ -38,19 +34,21 @@ public class OptionValuesManagement : PageModel
     public string OptionName { get; set; } = null!;
 
     public List<OptionValue> OptionValues { get; set; } = null!;
+
+    public Option Option { get; set; }
     
     public async Task OnGet(int optionId, CancellationToken cancellationToken)
     {
         OptionId = optionId;
-        var option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+        Option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
         
-        if (option is null)
+        if (Option is null)
         {
             throw new NullReferenceException("Option does not exists");
         }
         
         OptionValues = await _optionValueRepository.GetOptionValuesByOptionIdAsync(OptionId, cancellationToken);
-        OptionName = option!.Name;
+        OptionName = Option!.Name;
     }
 
     public async Task<IActionResult> OnPostRemoveAsync(CancellationToken cancellationToken)

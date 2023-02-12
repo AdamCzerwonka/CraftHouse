@@ -1,7 +1,8 @@
 ﻿@page "{userId}"
 @using CraftHouse.Web.Entities;
-@using CraftHouse.Web.Infrastructure
 @model CraftHouse.Web.Pages.Admin.User
+
+<a asp-page="/admin/Users">Return</a>
 
 <form method="post">
     @foreach (var option in Enum.GetNames<UserType>())

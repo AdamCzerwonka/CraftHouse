@@ -42,11 +42,17 @@ public class OptionsManagement : PageModel
 
     public int OptionNumber { get; set; }
 
-    public async Task OnGet(int productId, int optionNumber, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnGet(int productId, int optionNumber, CancellationToken cancellationToken)
     {
-        OptionNumber = optionNumber;
         ProductId = productId;
+        if (optionNumber < 1)
+        {
+            return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
+        
+        }
+        OptionNumber = optionNumber;
         ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
+        return Page();
     }
     
     public async Task<IActionResult> OnPostOptionAsync(CancellationToken cancellationToken)

@@ -38,24 +38,42 @@ public class ProductPage : PageModel
 
     public List<Category> Categories { get; set; } = null!;
 
+    public Product Product { get; set; }
+
     public async Task OnGet(int productId, CancellationToken cancellationToken)
     {
         Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
         ProductId = productId;
+        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+
+        if (Product is null)
+        {
+            throw new NullReferenceException("Product does not exists");
+        }
     }
 
     public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
     {
-        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
         var category = await _categoryRepository.GetCategoryByIdAsync(CategoryId, cancellationToken);
+        
+        if (Product is null)
+        {
+            throw new NullReferenceException("Product does not exists");
+        }
 
-        product!.Name = Name;
-        product.IsAvailable = IsAvailable;
-        product.Price = Price;
-        product.Description = Description;
-        product.CategoryId = category!.Id;
+        if (category is null)
+        {
+            throw new NullReferenceException("Category does not exists");
+        }
 
-        await _productRepository.UpdateProductAsync(product, cancellationToken);
+        Product!.Name = Name;
+        Product.IsAvailable = IsAvailable;
+        Product.Price = Price;
+        Product.Description = Description;
+        Product.CategoryId = category!.Id;
+
+        await _productRepository.UpdateProductAsync(Product, cancellationToken);
 
         return Redirect($"/admin/ProductPage/{ProductId}");
     }

@@ -35,7 +35,7 @@ public class OptionValueRepository : IOptionValueRepository
 
     public async Task AddNewOptionValueAsync(OptionValue optionValue, CancellationToken cancellationToken)
     {
-        await _context.OptionValues.AddAsync(optionValue, cancellationToken);
+        _context.OptionValues.Add(optionValue);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -69,7 +69,7 @@ public class OptionValueRepository : IOptionValueRepository
             OptionId = optionId
         };
         
-        await _context.OptionValues.AddAsync(newOptionValue, cancellationToken);
+        _context.OptionValues.Add(newOptionValue);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }
