@@ -1,57 +1,38 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
+﻿using CraftHouse.Web.Infrastructure;
 
 namespace CraftHouse.Web.Services;
 
 public class CartService : ICartService
 {
-    private readonly ILogger<CartService> _logger;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ISession _session;
     private const string SessionCartKey = "cart";
 
-    public CartService(ILogger<CartService> logger, IHttpContextAccessor httpContextAccessor)
+    public CartService(IHttpContextAccessor httpContextAccessor)
     {
-        _logger = logger;
-        _httpContextAccessor = httpContextAccessor;
+        _session = httpContextAccessor.HttpContext!.Session;
     }
-    
+
     public void AddCartEntry(CartEntry entry)
     {
-        var sessionCart = _httpContextAccessor.HttpContext!.Session.GetString(SessionCartKey);
-        var cart =
-            sessionCart is null
-                ? new List<CartEntry>()
-                : JsonSerializer.Deserialize<List<CartEntry>>(sessionCart);
-
-        cart ??= new List<CartEntry>();
+        var cart = _session.GetFromJson<List<CartEntry>>(SessionCartKey);
         
         cart.Add(entry);
 
-        var serializedCart =  JsonSerializer.Serialize(cart);
-        _logger.LogInformation("Serialized cart: {@cart}", serializedCart);
-        _httpContextAccessor.HttpContext.Session.SetString(SessionCartKey, serializedCart);
+        _session.SetAsJson(SessionCartKey, cart);
     }
 
     public IEnumerable<CartEntry> GetCartEntries()
-    {
-        var sessionCart = _httpContextAccessor.HttpContext!.Session.GetString(SessionCartKey);
-        var cart =
-            sessionCart is null
-                ? new List<CartEntry>()
-                : JsonSerializer.Deserialize<List<CartEntry>>(sessionCart);
-        
-        return cart ?? new List<CartEntry>();
-    }
+        => _session.GetFromJson<List<CartEntry>>(SessionCartKey);
 }
 
 public class CartEntry
 {
-    public int ProductId { get; set; }
-    public IEnumerable<CartEntryOption>? Options { get; set; } = null!;
+    public int ProductId { get; init; }
+    public IEnumerable<CartEntryOption>? Options { get; set; }
 }
 
 public class CartEntryOption
 {
     public int OptionId { get; set; }
-    public List<int> Options { get; } = new();
+    public List<int> Options { get; set; }
 }
