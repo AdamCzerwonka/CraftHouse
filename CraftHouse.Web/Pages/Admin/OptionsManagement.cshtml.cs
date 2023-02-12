@@ -45,10 +45,16 @@ public class OptionsManagement : PageModel
     public async Task<IActionResult> OnGet(int productId, int optionNumber, CancellationToken cancellationToken)
     {
         ProductId = productId;
+        var product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
+
+        if (product is null)
+        {
+            throw new NullReferenceException("Product does not exists");
+        }
+        
         if (optionNumber < 1)
         {
             return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
-        
         }
         OptionNumber = optionNumber;
         ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
