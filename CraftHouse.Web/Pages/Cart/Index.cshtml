@@ -1,0 +1,10 @@
+﻿@page
+@model CraftHouse.Web.Pages.Cart.Index
+
+<h1>Cart</h1>
+
+@foreach (var entry in Model.CartEntries)
+{
+    <p>@entry.Name</p>
+    <p>@entry.Price</p>
+}
