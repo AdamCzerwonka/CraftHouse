@@ -2,11 +2,12 @@
 @model CraftHouse.Web.Pages.Cart.Index
 
 <h1>Cart</h1>
+<h2>Sum: @Model.CartPrice</h2>
 
 @foreach (var entry in Model.CartEntries)
 {
     <p>@entry.Name</p>
-    <p>@entry.Price</p>
+    <p>@entry.BasePrice</p>
     @foreach (var opt in entry.Options)
     {
         <p>@opt.Name</p>
@@ -15,4 +16,7 @@
             <p>@value.Name - @value.Price</p>
         }
     }
+
+    <p>Price: @entry.TotalPrice</p>
+    <hr/>
 }

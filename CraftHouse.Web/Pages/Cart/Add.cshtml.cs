@@ -48,7 +48,7 @@ public class Add : PageModel
     }
 
     [BindProperty]
-    public AddToCartModel CartProduct { get; set; }
+    public AddToCartModel CartProduct { get; set; } = null!;
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {

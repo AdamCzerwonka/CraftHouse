@@ -18,6 +18,7 @@ public class Index : PageModel
     }
 
     public IEnumerable<CartEntryProduct> CartEntries { get; set; } = null!;
+    public float CartPrice { get; set; }
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
@@ -26,12 +27,23 @@ public class Index : PageModel
 
         foreach (var entry in entries)
         {
-            var cartProduct = new CartEntryProduct();
-
             var product = await _context
                 .Products
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == entry.ProductId && x.DeletedAt == null, cancellationToken);
+                .Where(x => x.DeletedAt == null)
+                .FirstOrDefaultAsync(x => x.Id == entry.ProductId, cancellationToken);
+
+            if (product is null)
+            {
+                throw new InvalidOperationException("Product not found");
+            }
+
+            var cartProduct = new CartEntryProduct()
+            {
+                Name = product.Name,
+                BasePrice = product.Price,
+                TotalPrice = product.Price
+            };
 
             if (entry.Options is not null)
             {
@@ -39,36 +51,38 @@ public class Index : PageModel
                 {
                     var opt = await _context
                         .Options
-                        .Include(x=>x.OptionValues)
+                        .Include(x => x.OptionValues)
                         .AsNoTracking()
                         .FirstOrDefaultAsync(x => x.Id == option.OptionId, cancellationToken);
 
+                    if (opt is null)
+                    {
+                        throw new InvalidOperationException("Option not found");
+                    }
+
+                    var mappedValues = option.Values.Select(valueId =>
+                    {
+                        var value = opt.OptionValues.First(x => x.Id == valueId);
+                        return new CartOptionValue()
+                        {
+                            Name = value.Value,
+                            Price = value.Price
+                        };
+                    }).ToList();
+                    
+                    cartProduct.TotalPrice += mappedValues.Sum(x => x.Price);
 
                     var cartOption = new CartOption()
                     {
-                        Name = opt!.Name
+                        Name = opt.Name,
+                        Values = mappedValues
                     };
-                    
-                    foreach (var value in option.Values)
-                    {
-                        var val = opt.OptionValues.FirstOrDefault(x => x.Id == value);
-
-                        var optionValue = new CartOptionValue()
-                        {
-                            Name = val.Value,
-                            Price = val.Price
-                        };
-                        
-                        cartOption.Values.Add(optionValue);
-                    }
 
                     cartProduct.Options.Add(cartOption);
                 }
             }
 
-            cartProduct.Name = product!.Name;
-            cartProduct.Price = product!.Price;
-
+            CartPrice += cartProduct.TotalPrice;
             cartProducts.Add(cartProduct);
         }
 
@@ -78,20 +92,22 @@ public class Index : PageModel
 
 public class CartEntryProduct
 {
-    public string Name { get; set; } = null!;
-    public float Price { get; set; }
+    public string Name { get; init; } = null!;
+    public float BasePrice { get; init; }
+    
+    public float TotalPrice { get; set; }
 
-    public List<CartOption> Options { get; set; } = new();
+    public List<CartOption> Options { get; } = new();
 }
 
 public class CartOption
 {
-    public string Name { get; set; } = null!;
-    public List<CartOptionValue> Values { get; set; } = new();
+    public string Name { get; init; } = null!;
+    public IEnumerable<CartOptionValue> Values { get; init; } = null!;
 }
 
 public class CartOptionValue
 {
-    public string Name { get; set; } = null!;
-    public float Price { get; set; }
+    public string Name { get; init; } = null!;
+    public float Price { get; init; }
 }
