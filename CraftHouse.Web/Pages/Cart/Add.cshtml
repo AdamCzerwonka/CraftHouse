@@ -8,12 +8,12 @@
 
 <h2>Options</h2>
 <form method="post">
-    <input type="hidden" value="@Model.Product.Id" asp-for="AddToCart.ProductId"/>
+    <input type="hidden" value="@Model.Product.Id" asp-for="CartProduct.ProductId"/>
     @for (var i = 0; i < Model.Options.Count; i++)
     {
         var option = Model.Options[i];
         var index = i;
-        <input type="hidden" value="@option.Id" asp-for="AddToCart.Options[index].OptionId"/>
+        <input type="hidden" value="@option.Id" asp-for="CartProduct.Options[index].OptionId"/>
         <h3>@option.Name</h3>
         <p>Pick: @option.MaxOccurs</p>
         <p>Required: @option.Required</p>
@@ -22,7 +22,7 @@
         {
             <label>
                 @value.Value
-                <input type="checkbox" value="@value.Id" Name="AddToCart.Options[@index].Values"/>
+                <input type="checkbox" value="@value.Id" Name="CartProduct.Options[@index].Values"/>
             </label>
         }
     }
