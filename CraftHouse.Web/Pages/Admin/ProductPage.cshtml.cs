@@ -1,6 +1,8 @@
-﻿using CraftHouse.Web.Entities;
+﻿using CraftHouse.Web.DTOs;
+using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -11,27 +13,18 @@ public class ProductPage : PageModel
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IValidator<Product> _validator;
 
-    public ProductPage(ICategoryRepository categoryRepository, IProductRepository productRepository)
+    public ProductPage(ICategoryRepository categoryRepository, IProductRepository productRepository,
+        IValidator<Product> validator)
     {
         _categoryRepository = categoryRepository;
         _productRepository = productRepository;
+        _validator = validator;
     }
 
     [BindProperty]
-    public string Name { get; set; } = null!;
-
-    [BindProperty]
-    public bool IsAvailable { get; set; }
-
-    [BindProperty]
-    public float Price { get; set; }
-
-    [BindProperty]
-    public string Description { get; set; } = null!;
-
-    [BindProperty]
-    public int CategoryId { get; set; }
+    public ProductDto ProductDto { get; set; } = null!;
 
     [BindProperty]
     public int ProductId { get; set; }
@@ -39,6 +32,8 @@ public class ProductPage : PageModel
     public List<Category> Categories { get; set; } = null!;
 
     public Product Product { get; set; }
+    
+    public List<string>? Errors { get; set; }
 
     public async Task OnGet(int productId, CancellationToken cancellationToken)
     {
@@ -55,8 +50,8 @@ public class ProductPage : PageModel
     public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
     {
         Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
-        var category = await _categoryRepository.GetCategoryByIdAsync(CategoryId, cancellationToken);
-        
+        var category = await _categoryRepository.GetCategoryByIdAsync(ProductDto.CategoryId, cancellationToken);
+
         if (Product is null)
         {
             throw new NullReferenceException("Product does not exists");
@@ -66,11 +61,21 @@ public class ProductPage : PageModel
         {
             throw new NullReferenceException("Category does not exists");
         }
+        
+        var product = ProductDto.MapToProduct();
+        var validationResult = await _validator.ValidateAsync(product, cancellationToken);
 
-        Product!.Name = Name;
-        Product.IsAvailable = IsAvailable;
-        Product.Price = Price;
-        Product.Description = Description;
+        if (!validationResult.IsValid)
+        {
+            Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
+            Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
+            return Page();
+        }
+
+        Product!.Name = ProductDto.Name;
+        Product.IsAvailable = ProductDto.IsAvailable;
+        Product.Price = ProductDto.Price;
+        Product.Description = ProductDto.Description;
         Product.CategoryId = category!.Id;
 
         await _productRepository.UpdateProductAsync(Product, cancellationToken);
