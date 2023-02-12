@@ -12,7 +12,7 @@
             <p class="product__name">@prod.Name</p>
             <p>@prod.Description</p>
             <p>@prod.Price</p>
-            <a href="">Add to cart</a>
+            <a asp-page="/Cart/Add" asp-route-productId="@prod.Id">Add to cart</a>
         </div>
     }
 </div>
