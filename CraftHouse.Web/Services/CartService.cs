@@ -1,4 +1,5 @@
 ﻿using CraftHouse.Web.Infrastructure;
+using CraftHouse.Web.Models;
 
 namespace CraftHouse.Web.Services;
 
@@ -23,16 +24,4 @@ public class CartService : ICartService
 
     public IEnumerable<CartEntry> GetCartEntries()
         => _session.GetFromJson<List<CartEntry>>(SessionCartKey);
-}
-
-public class CartEntry
-{
-    public int ProductId { get; init; }
-    public IEnumerable<CartEntryOption>? Options { get; set; }
-}
-
-public class CartEntryOption
-{
-    public int OptionId { get; set; }
-    public List<int> Options { get; set; }
 }

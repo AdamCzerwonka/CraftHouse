@@ -1,4 +1,6 @@
-﻿namespace CraftHouse.Web.Services;
+﻿using CraftHouse.Web.Models;
+
+namespace CraftHouse.Web.Services;
 
 public interface ICartService
 {

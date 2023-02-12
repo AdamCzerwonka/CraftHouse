@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.Xml;
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
+using CraftHouse.Web.Models;
 using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
