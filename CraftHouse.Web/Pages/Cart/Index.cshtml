@@ -1,0 +1,26 @@
+﻿@page
+@model CraftHouse.Web.Pages.Cart.Index
+
+<h1>Cart</h1>
+<h2>Sum: @Model.CartPrice</h2>
+
+@foreach (var entry in Model.CartEntries)
+{
+    <p>@entry.Name</p>
+    <p>@entry.BasePrice</p>
+    @foreach (var opt in entry.Options)
+    {
+        <p>@opt.Name</p>
+        @foreach (var value in opt.Values)
+        {
+            <p>@value.Name - @value.Price</p>
+        }
+    }
+
+    <p>Price: @entry.TotalPrice</p>
+    <form method="post" asp-page-handler="delete">
+        <input type="hidden" value="@entry.EntryId" asp-for="DeleteEntry.EntryId"/> 
+        <input type="submit" value="Delete"/>
+    </form>
+    <hr/>
+}

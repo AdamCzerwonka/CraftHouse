@@ -13,6 +13,8 @@ public class Option : EntityBase
     
     [Required]
     public int MaxOccurs { get; set; }
+
+    public bool Required { get; set; }
     
     public int ProductId { get; set; }
 

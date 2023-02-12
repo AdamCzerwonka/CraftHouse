@@ -36,10 +36,6 @@ public class AppDbContext : DbContext
             .WithMany(x => x.OptionValues)
             .HasForeignKey(x => x.OptionId);
 
-        modelBuilder
-            .Entity<OptionValue>()
-            .HasKey(x => new { x.OptionId, x.Value });
-
         base.OnModelCreating(modelBuilder);
     }
 }
