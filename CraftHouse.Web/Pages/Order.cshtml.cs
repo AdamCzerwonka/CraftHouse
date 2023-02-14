@@ -57,16 +57,58 @@ public class OrderModel : PageModel
 
                 foreach (var entry in cart)
                 {
+                    var product = await _context
+                        .Products
+                        .AsNoTracking()
+                        .Where(x => x.DeletedAt == null)
+                        .FirstOrDefaultAsync(x => x.Id == entry.ProductId, cancellationToken);
+
+                    if (product is null)
+                    {
+                        throw new Exception("Product not found");
+                    }
+
                     var orderItem = new OrderItem()
                     {
                         OrderId = order.Id,
-                        ProductId = entry.ProductId
+                        ProductId = product.Id,
+                        Value = product.Price
                     };
 
                     _context.OrderItems.Add(orderItem);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    if (entry.Options is null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var entryOption in entry.Options)
+                    {
+                        var option = await _context
+                            .Options
+                            .Include(x=>x.OptionValues)
+                            .AsNoTracking()
+                            .Where(x => x.DeletedAt == null)
+                            .FirstAsync(x => x.Id == entryOption.OptionId, cancellationToken);
+
+                        foreach (var optionValue in entryOption.Values)
+                        {
+                            var value = option.OptionValues.First(x => x.Id == optionValue);
+                            var orderItemOption = new OrderItemOption()
+                            {
+                                OrderItemId = orderItem.Id,
+                                OptionId = option.Id,
+                                Name = value.Value,
+                                Value = value.Price
+                            };
+
+                            _context.OrderItemOptions.Add(orderItemOption);
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
+                    }
                 }
 
-                await _context.SaveChangesAsync(cancellationToken);
 
                 await transaction.CommitAsync(cancellationToken);
             }
