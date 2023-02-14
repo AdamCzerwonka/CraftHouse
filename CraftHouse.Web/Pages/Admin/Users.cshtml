@@ -9,11 +9,11 @@
 <table>
     <thead>
     <tr>
-        <th>User</th>
+        <th class="table--center">ID</th>
         <th>Name</th>
         <th>Email</th>
-        <th>Role</th>
-        <th>Actions</th>
+        <th class="table--small_column">Role</th>
+        <th class="table--center">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -23,12 +23,12 @@
             <td class="table--center">@user.Id</td>
             <td>@user.FirstName @user.LastName</td>
             <td>@user.Email</td>
-            <td>@user.UserType</td>
+            <td class="table--small_column">@user.UserType</td>
             <td class="table--flex">
                 <a class="button" asp-page="/admin/User" asp-route-userId="@user.Id">Edit</a>
                 <form asp-page-handler="delete" method="post">
                     <input type="hidden" value="@user.Id" name="userId"/>
-                    <input class="button" type="submit" value="Delete" />
+                    <input class="button button--red" type="submit" value="Delete" />
                 </form>
             </td>
         </tr>

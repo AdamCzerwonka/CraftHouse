@@ -9,18 +9,18 @@ table {
     border: 1px solid #00000000;
     border-bottom: 3px solid $main-teal;
     overflow: hidden;
+    margin: 1rem 0 1rem 0;
 }
 
 thead th {
     font-size: 1.2rem;
     padding: 0.6rem;
-    text-align: center;
+    text-align: left;
     background-color: $main-teal;
     color: $main-black;
 }
 
 tbody tr {
-    //background-color: darken($main-grey, 2);
     background-color: #ffffff;
 }
 
@@ -29,16 +29,24 @@ tbody td {
 }
 
 tbody tr:nth-child(even) {
-    //background-color: darken($main-grey, 5);
     background-color: darken(#ffffff, 5);
 }
 
 .table--center {
     text-align: center;
+    min-height: 115px;
 }
 
 .table--flex {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+}
+
+.table--small_column {
+    width: 10%;
+}
+
+.table--medium_column {
+    width: 35%;
 }
