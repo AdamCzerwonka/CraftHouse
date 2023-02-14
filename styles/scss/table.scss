@@ -1,0 +1,44 @@
+@import 'variables';
+
+
+table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: separate;
+    border-radius: 10px;
+    border: 1px solid #00000000;
+    border-bottom: 3px solid $main-teal;
+    overflow: hidden;
+}
+
+thead th {
+    font-size: 1.2rem;
+    padding: 0.6rem;
+    text-align: center;
+    background-color: $main-teal;
+    color: $main-black;
+}
+
+tbody tr {
+    //background-color: darken($main-grey, 2);
+    background-color: #ffffff;
+}
+
+tbody td {
+    padding: 0.6rem;
+}
+
+tbody tr:nth-child(even) {
+    //background-color: darken($main-grey, 5);
+    background-color: darken(#ffffff, 5);
+}
+
+.table--center {
+    text-align: center;
+}
+
+.table--flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}

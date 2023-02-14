@@ -1,4 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import 'variables';
+
+/*
+#EAEAEA grey
+#FF2E63 red
+#252A34 black
+#08D9D6 teal
+*/
 
 *,
 *::after,
@@ -7,6 +15,18 @@
   margin: 0;
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 
 body {
@@ -21,6 +41,28 @@ body {
   width: 1300px;
   height: 100%;
 }
+
+.error {
+  color: #ff2e63;
+}
+
+.button {
+  cursor: pointer;
+  text-decoration: underline;
+  color: $main-black;
+
+  &:visited {
+    color: $main-black;
+  }
+
+  &:hover {
+    color: lighten($main-black, 40);
+    transition: ease-in-out .2s;
+  }
+}
+
+
+
 
 .products {
   display: grid;
@@ -61,34 +103,14 @@ body {
   }
 }
 
-table {
-  border-collapse: collapse;
-}
-
-td,
-th {
-  border: 1px solid black;
-  padding: 10px;
-}
-
 .categories__category {
   display: flex;
 }
 
-.categories__category > * {
+.categories__category>* {
   margin: 10px;
-}
-
-.error {
-  color: #ff2e63;
 }
 
 .categoryManagement__form {
   margin: 10px;
 }
-/*
-#EAEAEA grey
-#FF2E63 red
-#252A34 black
-#08D9D6 teal
-*/
