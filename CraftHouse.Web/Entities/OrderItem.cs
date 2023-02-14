@@ -10,10 +10,13 @@ public class OrderItem : EntityBase
     [Required]
     public int OrderId { get; set; }
 
-    public Order Order { get; set; } = null!;
-
     [Required]
     public int ProductId { get; set; }
+
+    [Required]
+    public float Value { get; set; }
+    
+    public Order Order { get; set; } = null!;
 
     public Product Product { get; set; } = null!;
 }
