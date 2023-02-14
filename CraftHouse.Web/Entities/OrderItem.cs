@@ -19,4 +19,6 @@ public class OrderItem : EntityBase
     public Order Order { get; set; } = null!;
 
     public Product Product { get; set; } = null!;
+
+    public ICollection<OrderItemOption> OrderItemOptions { get; set; } = null!;
 }
