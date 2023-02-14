@@ -12,19 +12,15 @@ namespace CraftHouse.Web.Pages;
 [RequireAuth]
 public class OrderModel : PageModel
 {
-    private readonly AppDbContext _context;
     private readonly IAuthService _authService;
     private readonly ICartService _cartService;
-    private readonly ILogger<OrderModel> _logger;
     private readonly IOrderRepository _orderRepository;
 
-    public OrderModel(AppDbContext context, IAuthService authService, ICartService cartService,
-        ILogger<OrderModel> logger, IOrderRepository orderRepository)
+    public OrderModel(IAuthService authService, ICartService cartService,
+        IOrderRepository orderRepository)
     {
-        _context = context;
         _authService = authService;
         _cartService = cartService;
-        _logger = logger;
         _orderRepository = orderRepository;
     }
 
@@ -38,7 +34,7 @@ public class OrderModel : PageModel
         var user = await _authService.GetLoggedInUserAsync(cancellationToken);
 
 
-        await _orderRepository.CreateOrderAsync(cart, user, cancellationToken);
+        await _orderRepository.CreateOrderAsync(cart, user!, cancellationToken);
 
         return Redirect("/Index");
     }
