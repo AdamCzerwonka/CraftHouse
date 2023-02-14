@@ -25,4 +25,5 @@ public class Product:EntityBase
     public Category Category { get; set; } = null!;
 
     public ICollection<Option> Options { get; set; } = null!;
+    public ICollection<OrderItem> OrderItems { get; set; } = null!;
 }

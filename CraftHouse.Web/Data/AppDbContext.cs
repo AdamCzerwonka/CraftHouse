@@ -1,6 +1,5 @@
 ﻿using CraftHouse.Web.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace CraftHouse.Web.Data;
 
@@ -15,9 +14,29 @@ public class AppDbContext : DbContext
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Option> Options => Set<Option>();
     public DbSet<OptionValue> OptionValues => Set<OptionValue>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder
+            .Entity<OrderItem>()
+            .HasOne(x => x.Order)
+            .WithMany(x => x.OrderItems)
+            .HasForeignKey(x => x.OrderId);
+        
+        modelBuilder
+            .Entity<OrderItem>()
+            .HasOne(x => x.Product)
+            .WithMany(x => x.OrderItems)
+            .HasForeignKey(x => x.ProductId);
+        
+        modelBuilder
+            .Entity<Order>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Orders)
+            .HasForeignKey(x => x.UserId);
+        
         modelBuilder
             .Entity<Product>()
             .HasOne(x => x.Category)
