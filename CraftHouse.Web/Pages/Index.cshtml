@@ -5,7 +5,7 @@
 }
 
 <aside>
-    <a asp-page="/Index">All</a>
+    <a asp-page="/Index" asp-route-pageNumber="1">All</a>
     @foreach (var category in Model.Categories)
     {
         <a asp-page="/Index"

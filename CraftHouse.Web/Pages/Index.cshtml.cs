@@ -10,20 +10,15 @@ namespace CraftHouse.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly IAuthService _authService;
     private readonly AppDbContext _context;
     private readonly ICategoryRepository _categoryRepository;
-    private readonly ILogger<IndexModel> _logger;
 
     public IndexModel(IAuthService authService, AppDbContext context, ICategoryRepository categoryRepository, ILogger<IndexModel> logger)
     {
-        _authService = authService;
         _context = context;
         _categoryRepository = categoryRepository;
-        _logger = logger;
     }
 
-    [BindProperty]
     public int? CategoryId { get; set; }
     public List<Category> Categories { get; set; } = null!;
     public List<Product> Products { get; set; } = null!;

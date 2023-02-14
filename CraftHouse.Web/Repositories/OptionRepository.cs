@@ -48,9 +48,9 @@ public class OptionRepository : IOptionRepository
             .ToListAsync(cancellationToken);
 
     public async Task<bool> IsOptionDeletedAsync(Option option, CancellationToken cancellationToken)
-        => !(await _context
+        => await _context
             .Options
-            .AnyAsync(x => x.Id == option.Id && x.DeletedAt == null, cancellationToken));
+            .AnyAsync(x => x.Id == option.Id && x.DeletedAt != null, cancellationToken);
 
     public async Task UpdateOptionAsync(Option option, CancellationToken cancellationToken)
     {
