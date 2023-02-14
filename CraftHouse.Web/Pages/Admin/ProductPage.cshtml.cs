@@ -31,7 +31,7 @@ public class ProductPage : PageModel
 
     public List<Category> Categories { get; set; } = null!;
 
-    public Product Product { get; set; }
+    public Product Product { get; set; } = null!;
     
     public List<string>? Errors { get; set; }
 
@@ -39,17 +39,14 @@ public class ProductPage : PageModel
     {
         Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
         ProductId = productId;
-        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
-
-        if (Product is null)
-        {
-            throw new NullReferenceException("Product does not exists");
-        }
+        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        Product = product ?? throw new InvalidOperationException("Product not found");
     }
 
     public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
     {
-        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        Product = product ?? throw new InvalidOperationException("Product not found");
         var category = await _categoryRepository.GetCategoryByIdAsync(ProductDto.CategoryId, cancellationToken);
 
         if (Product is null)
@@ -62,8 +59,8 @@ public class ProductPage : PageModel
             throw new NullReferenceException("Category does not exists");
         }
         
-        var product = ProductDto.MapToProduct();
-        var validationResult = await _validator.ValidateAsync(product, cancellationToken);
+        var productDto = ProductDto.MapToProduct();
+        var validationResult = await _validator.ValidateAsync(productDto, cancellationToken);
 
         if (!validationResult.IsValid)
         {
