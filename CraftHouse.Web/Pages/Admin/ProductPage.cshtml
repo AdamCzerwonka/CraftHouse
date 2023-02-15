@@ -6,9 +6,10 @@
     ViewData["styles"] = "productPage";
 }
 
-<a asp-page="/admin/Products">Return</a>
-
-<br/><br/>
+<a class="return" asp-page="/admin/Products">
+    <img class="return__arrow" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+    <p class="return__text">Return</p>
+</a>
 
 @if (Model.Errors != null)
 {
@@ -18,7 +19,7 @@
     }
 }
 
-<h1>EDIT PRODUCT</h1>
+<h1>Product @Model.Product.Name</h1>
 <form method="post" asp-page-handler="Edit" class="form">
     <input type="hidden" asp-for="ProductId" value="@Model.ProductId"/>
 

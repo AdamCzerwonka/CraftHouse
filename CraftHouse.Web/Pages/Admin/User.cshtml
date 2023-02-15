@@ -2,7 +2,10 @@
 @using CraftHouse.Web.Entities;
 @model CraftHouse.Web.Pages.Admin.User
 
-<a asp-page="/admin/Users">Return</a>
+<a class="return" asp-page="/admin/Users">
+    <img class="return__arrow" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+    <p class="return__text">Return</p>
+</a>
 
 <form method="post">
     @foreach (var option in Enum.GetNames<UserType>())
@@ -13,7 +16,7 @@
                    value="@option" checked="@(Model.UserData.UserType == Enum.Parse<UserType>(option))"/>
         </div>
     }
-    
+
     <input type="hidden" asp-for="UserId" value="@Model.UserId"/>
 
     <button type="submit">Update</button>
