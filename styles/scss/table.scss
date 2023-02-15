@@ -1,7 +1,7 @@
 @import 'variables';
 
 
-table {
+.table {
     width: 100%;
     border-spacing: 0;
     border-collapse: separate;
@@ -10,43 +10,45 @@ table {
     border-bottom: 3px solid $main-teal;
     overflow: hidden;
     margin: 1rem 0 1rem 0;
-}
+    line-break: anywhere;
 
-thead th {
-    font-size: 1.2rem;
-    padding: 0.6rem;
-    text-align: left;
-    background-color: $main-teal;
-    color: $main-black;
-}
+    thead th {
+        font-size: 1.2rem;
+        padding: 0.6rem;
+        text-align: left;
+        background-color: $main-teal;
+        color: $main-black;
+        user-select: none;
+    }
 
-tbody tr {
-    background-color: #ffffff;
-}
+    tbody tr {
+        background-color: #ffffff;
+    }
 
-tbody td {
-    padding: 0.6rem;
-}
+    tbody td {
+        padding: 0.6rem;
+    }
 
-tbody tr:nth-child(even) {
-    background-color: darken(#ffffff, 5);
-}
+    tbody tr:nth-child(even) {
+        background-color: darken(#ffffff, 5);
+    }
 
-.table--center {
-    text-align: center;
-    min-height: 115px;
-}
+    .table--center {
+        text-align: center;
+        min-height: 115px;
+    }
 
-.table--flex {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-}
+    .table--flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+    }
 
-.table--small_column {
-    width: 10%;
-}
+    .table--small_column {
+        max-width: 100px;
+    }
 
-.table--medium_column {
-    width: 35%;
+    .table--medium_column {
+        max-width: 350px;
+    }
 }
