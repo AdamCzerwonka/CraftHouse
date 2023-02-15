@@ -3,8 +3,7 @@
 
 @{
     ViewData["title"] = "Products";
-    ViewData["styles"] = "form";
-    ViewData["styles"] = "table";
+    ViewData["styles"] = "products";
 }
 
 @if (Model.Errors != null)
@@ -16,20 +15,16 @@
 }
 
 <h1>Add new product</h1>
-<form class="chuj" method="post" asp-page-handler="Product">
+<form class="form" method="post" asp-page-handler="Product">
     <label for="name">Name</label>
     <input type="text" id="name" asp-for="@Model.ProductDto.Name"/>
-    
-    <label for="available">Available</label>
-    <input id="available" type="radio" value="true" asp-for="@Model.ProductDto.IsAvailable"/>
-    <label for="unavailable">Unavailable</label>
-    <input id="unavailable" type="radio" value="false" asp-for="@Model.ProductDto.IsAvailable"/>
+
 
     <label for="price">Price</label>
     <input type="number" step="0.01" id="price" asp-for="@Model.ProductDto.Price"/>
 
     <label for="description">Description</label>
-    <input type="text" id="description" asp-for="@Model.ProductDto.Description"/>
+    <textarea id="description" asp-for="@Model.ProductDto.Description" maxlength="250"></textarea>
 
     <label for="categoryId">Category name</label>
     <select id="categoryId" asp-for="@Model.ProductDto.CategoryId">
@@ -39,10 +34,17 @@
         }
     </select>
 
-    <input type="submit" value="Add"/>
+    <div>
+        <input id="unavailable" type="radio" value="false" asp-for="@Model.ProductDto.IsAvailable" checked="checked"/>
+        <label for="unavailable">Unavailable</label>
+        <input id="available" type="radio" value="true" asp-for="@Model.ProductDto.IsAvailable"/>
+        <label for="available">Available</label>
+    </div>
+
+    <input class="button button--teal" type="submit" value="Add"/>
 </form>
 
-<table>
+<table class="table">
     <thead>
     <th class="table--center">ID</th>
     <th>Name</th>

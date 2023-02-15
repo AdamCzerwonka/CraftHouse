@@ -45,6 +45,11 @@ public class ProductPage : PageModel
         {
             throw new NullReferenceException("Product does not exists");
         }
+
+        ProductDto = new ProductDto
+        {
+            Description = Product.Description
+        };
     }
 
     public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
