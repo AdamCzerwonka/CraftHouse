@@ -1,36 +1,45 @@
 ﻿@page "{handler?}"
 @model CategoryManagement
 
+@{
+    ViewData["title"] = "Categories";
+    ViewData["styles"] = "categories";
+}
+
 @if (Model.Error != null)
 {
     <div class="error">@Model.Error</div>
 }
 
 <h1>New category</h1>
-<form method="post" asp-page-handler="AddCategory" class="categoryManagement__form">
+<form class="form" method="post" asp-page-handler="AddCategory" class="categoryManagement__form">
     <label for="addCategoryName">Name for new category</label>
     <input type="text" id="addCategoryName" asp-for="@Model.CategoryDto.Name"/>
 
-    <input type="submit" value="Add"/>
+    <input class="button button--teal" type="submit" value="Add"/>
 </form>
 
 <h1>Existing categories</h1>
 <div class="categories">
-    <table>
+    <table class="table">
+        <thead>
         <tr>
             <th>Id</th>
             <th>Name</th>
-            <th>Actions</th>
+            <th class="table--center">Actions</th>
         </tr>
+        </thead>
+        <tbody>
         @foreach (var category in Model.Categories)
         {
             <tr>
                 <td>@category.Id</td>
                 <td>@category.Name</td>
-                <td>
-                    <a asp-page="/Admin/CategoryPage" asp-route-id="@category.Id">Show details</a>
+                <td class="table--center">
+                    <a class="button" asp-page="/Admin/CategoryPage" asp-route-id="@category.Id">Show details</a>
                 </td>
             </tr>
         }
+        </tbody>
     </table>
 </div>
