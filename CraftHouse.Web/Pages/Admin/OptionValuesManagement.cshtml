@@ -1,7 +1,15 @@
 ﻿@page "{optionId}"
 @model CraftHouse.Web.Pages.Admin.OptionValuesManagement
 
-<a asp-page="/admin/OptionsManagement" asp-route-productId="@Model.Option.ProductId" asp-route-optionNumber="1">Return</a>
+@{
+    ViewData["title"] = "Manage option values";
+    ViewData["styles"] = "manageOptions";
+}
+
+<a class="return" asp-page="/admin/OptionsManagement" asp-route-productId="@Model.Option.ProductId" asp-route-optionNumber="1">
+    <img class="return__arrow" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+    <p class="return__text">Return</p>
+</a>
 
 @if (Model.Errors != null)
 {
@@ -13,37 +21,40 @@
 
 <br/><br/>
 
-<form method="post" asp-page-handler="OptionName">
+<form class="form" method="post" asp-page-handler="OptionName">
     <label>Name</label>
     <input type="text" value="@Model.Option.Name" asp-for="OptionName"/>
-    <input type="submit" value="Change"/>
+    <input class="button button--teal" type="submit" value="Change"/>
 </form>
 
 <br/>
 
-<form method="post" asp-page-handler="NewValue">
+<form class="form"  method="post" asp-page-handler="NewValue">
     <input type="hidden" value="@Model.Option.ProductId"/>
     <label>Value</label>
     <input type="text" asp-for="@Model.OptionValueDto.Value"/>
     <label>Price</label>
     <input type="number" step="0.01" min="0" asp-for="@Model.OptionValueDto.Price"/>
-    <input type="submit" value="Add"/>
+    <input class="button button--teal" type="submit" value="Add"/>
 </form>
 
 <br/>
 
-<table>
-    <th>Option value for</th>
+<table class="table">
+    <thead>
+    <th class="table--center">Option ID</th>
     <th>Value</th>
     <th>Price</th>
     <th>New value</th>
     <th>New price</th>
     <th>Update</th>
     <th>Remove</th>
+    </thead>
+    <tbody>
     @foreach (var optionValue in @Model.OptionValues)
     {
         <tr>
-            <td>@optionValue.OptionId</td>
+            <td class="table--center">@optionValue.OptionId</td>
             <td>@optionValue.Value</td>
             <td>@optionValue.Price</td>
             <form method="post" asp-page-handler="UpdateValue">
@@ -56,16 +67,18 @@
                     <input type="number" step="0.01" min="0" value="@optionValue.Price.ToString().Replace(",", ".")" asp-for="OptionPrice"/>
                 </td>
                 <td>
-                    <input type="submit" value="Update"/>
+                    <input class="button" type="submit" value="Update"/>
                 </td>
             </form>
+
             <td>
                 <form method="post" asp-page-handler="Remove">
                     <input type="hidden" value="@optionValue.OptionId" asp-for="OptionId"/>
                     <input type="hidden" value="@optionValue.Value" asp-for="OptionValue"/>
-                    <input type="submit" value="Delete"/>
+                    <input class="button button--red" type="submit" value="Delete"/>
                 </form>
             </td>
         </tr>
     }
+    </tbody>
 </table>
