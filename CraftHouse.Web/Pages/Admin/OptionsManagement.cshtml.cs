@@ -1,12 +1,10 @@
-﻿using CraftHouse.Web.Data;
-using CraftHouse.Web.DTOs;
+﻿using CraftHouse.Web.DTOs;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace CraftHouse.Web.Pages.Admin;
 
@@ -29,12 +27,12 @@ public class OptionsManagement : PageModel
 
     [BindProperty]
     public string Name { get; set; } = null!;
-
-    [BindProperty]
-    public int ProductId { get; set; }
-
+    
     [BindProperty]
     public int OptionId { get; set; }
+    
+    [BindProperty]
+    public int ProductId { get; set; }
 
     [BindProperty]
     public int MaxOccurs { get; set; }
@@ -51,31 +49,32 @@ public class OptionsManagement : PageModel
     
     public List<string>? Errors { get; set; }
 
+    public Product Product { get; set; } = null!;
+
     public async Task<IActionResult> OnGet(int productId, int optionNumber, CancellationToken cancellationToken)
     {
-        ProductId = productId;
-        var product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
+        Product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
 
-        if (product is null)
+        if (Product is null)
         {
             throw new NullReferenceException("Product does not exists");
         }
 
         if (optionNumber < 1)
         {
-            return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
+            return Redirect($"/admin/OptionsManagement/{Product.Id}?optionNumber={1}");
         }
 
         OptionNumber = optionNumber;
-        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
+        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(Product.Id, cancellationToken);
         return Page();
     }
 
     public async Task<IActionResult> OnPostOptionAsync(CancellationToken cancellationToken)
     {
-        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
 
-        if (product is null)
+        if (Product is null)
         {
             throw new NullReferenceException("Product does not exists");
         }
@@ -92,7 +91,7 @@ public class OptionsManagement : PageModel
             var validationResult = await _optionValueValidator.ValidateAsync(optionValue, cancellationToken);
 
             if (validationResult.IsValid) continue;
-            ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
+            ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(Product.Id, cancellationToken);
             Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             return Page();
         }
@@ -101,14 +100,14 @@ public class OptionsManagement : PageModel
         {
             Name = Name,
             MaxOccurs = MaxOccurs,
-            ProductId = product.Id
+            ProductId = Product.Id
         };
 
         var option = optionDto.MapToOption();
         var optionValidationResult = await _optionValidator.ValidateAsync(option, cancellationToken);
         if (!optionValidationResult.IsValid)
         {
-            ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
+            ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(Product.Id, cancellationToken);
             Errors = optionValidationResult.Errors.Select(x => x.ErrorMessage).ToList();
             return Page();
         }
@@ -120,12 +119,12 @@ public class OptionsManagement : PageModel
 
         await _optionRepository.AddOptionAsync(option, cancellationToken);
 
-        return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
+        return Redirect($"/admin/OptionsManagement/{Product.Id}?optionNumber={1}");
     }
 
     public async Task<IActionResult> OnPostRemoveAsync(CancellationToken cancellationToken)
     {
-        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(ProductId, cancellationToken);
+        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(Product.Id, cancellationToken);
 
         foreach (var option in ExistingOptions)
         {
@@ -135,6 +134,6 @@ public class OptionsManagement : PageModel
             break;
         }
 
-        return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
+        return Redirect($"/admin/OptionsManagement/{Product.Id}?optionNumber={1}");
     }
 }

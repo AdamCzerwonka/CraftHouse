@@ -1,30 +1,30 @@
 ﻿@page
 @model ProductManagement
 
+@{
+    ViewData["title"] = "Products";
+    ViewData["styles"] = "products";
+}
+
 @if (Model.Errors != null)
 {
     @foreach (var error in @Model.Errors)
     {
-    <div class="error">@error</div>
+        <div class="error">@error</div>
     }
 }
 
-<div>PRODUCT ADD</div>
-<form method="post" asp-page-handler="Product">
+<h1>Add new product</h1>
+<form class="form" method="post" asp-page-handler="Product">
     <label for="name">Name</label>
     <input type="text" id="name" asp-for="@Model.ProductDto.Name"/>
 
-    <label for="isAvailable">Is available</label>
-    <select id="isAvailable" asp-for="@Model.ProductDto.IsAvailable">
-        <option value="true">available</option>
-        <option value="false">unavailable</option>
-    </select>
 
     <label for="price">Price</label>
     <input type="number" step="0.01" id="price" asp-for="@Model.ProductDto.Price"/>
 
     <label for="description">Description</label>
-    <input type="text" id="description" asp-for="@Model.ProductDto.Description"/>
+    <textarea id="description" asp-for="@Model.ProductDto.Description" maxlength="250"></textarea>
 
     <label for="categoryId">Category name</label>
     <select id="categoryId" asp-for="@Model.ProductDto.CategoryId">
@@ -34,35 +34,45 @@
         }
     </select>
 
-    <input type="submit" value="Add"/>
+    <div>
+        <input id="unavailable" type="radio" value="false" asp-for="@Model.ProductDto.IsAvailable" checked="checked"/>
+        <label for="unavailable">Unavailable</label>
+        <input id="available" type="radio" value="true" asp-for="@Model.ProductDto.IsAvailable"/>
+        <label for="available">Available</label>
+    </div>
+
+    <input class="button button--teal" type="submit" value="Add"/>
 </form>
 
-<br/><br/>
-
-<table>
+<table class="table">
+    <thead>
+    <th class="table--center">ID</th>
     <th>Name</th>
     <th>Available</th>
     <th>Price</th>
-    <th>Description</th>
+    <th class="table--medium_column">Description</th>
     <th>Category</th>
-    <th>Actions</th>
+    <th class="table--center">Actions</th>
+    </thead>
+    <tbody>
     @foreach (var product in @Model.Products)
     {
         <tr>
-            <td>@product.Id. @product.Name</td>
+            <td class="table--center">@product.Id</td>
+            <td>@product.Name</td>
             <td>@product.IsAvailable</td>
             <td>@product.Price</td>
-            <td>@product.Description</td>
-            <td>@product.Category.Id. @product.Category.Name</td>
-            <td>
+            <td class="table--medium_column">@product.Description</td>
+            <td>@product.Category.Name</td>
+            <td class="table--flex">
+                <a class="button" asp-page="/admin/ProductPage" asp-route-productId="@product.Id">Edit product</a>
+                <a class="button" asp-page="/admin/OptionsManagement" asp-route-productId="@product.Id" asp-route-optionNumber="1">Manage options</a>
                 <form method="post" asp-page-handler="Remove">
                     <input type="hidden" value="@product.Id" asp-for="ProductId"/>
-                    <input type="submit" value="Delete"/>
+                    <input class="button button--red" type="submit" value="Delete"/>
                 </form>
-                <a asp-page="/admin/ProductPage" asp-route-productId="@product.Id">Edit product</a>
-                <br/>
-                <a asp-page="/admin/OptionsManagement" asp-route-productId="@product.Id" asp-route-optionNumber="1">Manage options</a>
             </td>
         </tr>
     }
+    </tbody>
 </table>

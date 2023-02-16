@@ -1,4 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import 'variables';
+
+/*
+#EAEAEA grey
+#FF2E63 red
+#252A34 black
+#08D9D6 teal
+*/
 
 *,
 *::after,
@@ -9,6 +17,15 @@
   font-family: "Roboto", sans-serif;
 }
 
+button,
+input[type="submit"],
+input[type="reset"] {
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
 body {
   background-color: #eaeaea;
   display: flex;
@@ -17,10 +34,103 @@ body {
   height: 100vh;
 }
 
+h1,
+h2 {
+  color: $main-black;
+  margin: 10px 0 10px 0;
+}
+
 .content {
   width: 1300px;
   height: 100%;
 }
+
+.error {
+  color: #ff2e63;
+}
+
+.button {
+  cursor: pointer;
+  text-decoration: none;
+  color: $main-grey;
+  background-color: $main-blue;
+  border: 5px solid $main-blue;
+  border-radius: 7px;
+
+  &:visited {
+    color: $main-grey;
+  }
+
+  &:hover {
+
+    background-color: darken($main-blue, 20);
+    border-color: darken($main-blue, 20);
+    transition: ease-in-out .2s;
+  }
+
+  &--red {
+    background-color: $main-red;
+    border-color: $main-red;
+
+    &:visited {
+      color: $main-grey;
+    }
+
+    &:hover {
+      background-color: darken($main-red, 20);
+      border-color: darken($main-red, 20);
+
+    }
+  }
+
+  &--teal {
+    background-color: $main-teal;
+    border-color: $main-teal;
+
+    &:visited {
+      color: $main-grey;
+    }
+
+    &:hover {
+      background-color: darken($main-teal, 20);
+      border-color: darken($main-teal, 20);
+
+    }
+  }
+}
+
+.display_flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly !important;
+}
+
+.return {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 1.2rem;
+  text-decoration: none;
+
+  &:hover {
+    filter: $return-arrow-color;
+  }
+
+  &__arrow {
+    height: 1.1rem;
+    color: $main-black;
+    margin-right: 5px;
+
+
+  }
+
+  &__text {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: $main-black;
+    transform: translateY(-2px);
+  }
+}
+
 
 .products {
   display: grid;
@@ -60,35 +170,3 @@ body {
     padding: 0 10px;
   }
 }
-
-table {
-  border-collapse: collapse;
-}
-
-td,
-th {
-  border: 1px solid black;
-  padding: 10px;
-}
-
-.categories__category {
-  display: flex;
-}
-
-.categories__category > * {
-  margin: 10px;
-}
-
-.error {
-  color: #ff2e63;
-}
-
-.categoryManagement__form {
-  margin: 10px;
-}
-/*
-#EAEAEA grey
-#FF2E63 red
-#252A34 black
-#08D9D6 teal
-*/

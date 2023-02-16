@@ -1,0 +1,60 @@
+@import 'variables';
+
+.form {
+    justify-content: center;
+    display: grid;
+    font-weight: bold;
+
+    label {
+        font-size: 1.2rem;
+        user-select: none;
+    }
+
+    input {
+        padding: 5px;
+    }
+
+    input,
+    select,
+    div,
+    textarea {
+        width: 500px;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        border-bottom: 3px solid $main-teal;
+        border-right: none;
+        border-top: none;
+        border-left: none;
+        border-radius: 5px;
+
+        &:focus {
+            outline: none;
+            border-color: darken($main-teal, 20);
+        }
+    }
+
+    textarea {
+        resize: none;
+        height: 150px;
+        padding: 5px;
+    }
+
+    div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        background-color: none;
+        border-color: #00000000;
+
+        input {
+            margin: 0 0 0 10px;
+            width: 20px;
+            accent-color: $main-black;
+        }
+    }
+
+    .form--red {
+        border-color: $main-red;
+    }
+}

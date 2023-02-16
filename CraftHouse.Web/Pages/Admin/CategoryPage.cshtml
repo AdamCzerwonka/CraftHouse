@@ -1,36 +1,50 @@
 ﻿@page "/admin/category/{id}"
 @model CraftHouse.Web.Pages.Admin.CategoryPage
 
-<a asp-page="/admin/Categories">Return</a>
+@{
+    ViewData["title"] = "Category";
+    ViewData["styles"] = "categories";
+}
+
+<a class="return" asp-page="/admin/Categories">
+    <img class="return__arrow" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+    <p class="return__text">Return</p>
+</a>
 
 @if (Model.Error != null)
 {
     <div class="error">@Model.Error</div>
 }
 
-<h1>Category</h1>
-<p>Id: @Model.Category!.Id</p>
-<p>Name: @Model.Category.Name</p>
-<p>Products in this category: @Model.Category.Products.Count</p>
+<h1>Category @Model.Category.Name</h1>
+<h2>Products in this category: @Model.Category.Products.Count</h2>
 
-<form method="post" asp-page-handler="delete">
+<form class="form" method="post" asp-page-handler="update">
+    <label for="update-id">ID:</label>
+    <input readonly id="update-id" type="number" asp-for="CategoryUpdate.Id" value="@Model.Category.Id"/>
+    <label for="update-name">Name:</label>
+    <input id="update-name" type="text" asp-for="CategoryUpdate.Name" value="@Model.Category.Name"/>
+    <input class="button button--teal" type="submit" value="Update"/>
+</form>
+
+<form class="form" method="post" asp-page-handler="delete">
     <input type="hidden" asp-for="CategoryDelete.Id" value="@Model.Category!.Id"/>
-    <input type="submit" value="Delete"/>
+    <input class="button button--red form--red" type="submit" value="Delete"/>
 </form>
 
-<form method="post" asp-page-handler="update">
-    <div>
-        <label for="update-id">Id:</label>
-        <input readonly id="update-id" type="number" asp-for="CategoryUpdate.Id" value="@Model.Category.Id"/>
-    </div>
-    <div>
-        <label for="update-name">Name:</label>
-        <input id="update-name" type="text" asp-for="CategoryUpdate.Name" value="@Model.Category.Name"/>
-    </div>
-    <input type="submit" value="Update"/>
-</form>
-
-@foreach (var product in Model.Category.Products)
-{
-    <p>@product.Id @product.Name</p>
-}
+<h1>Products with this category</h1>
+<table class="table">
+    <thead>
+    <th class="table--center table--xsmall_column">ID</th>
+    <th>Name</th>
+    </thead>
+    <tbody>
+    @foreach (var product in Model.Category.Products)
+    {
+        <tr>
+            <td class="table--center table--xsmall_column">@product.Id</td>
+            <td>@product.Name</td>
+        </tr>
+    }
+    </tbody>
+</table>

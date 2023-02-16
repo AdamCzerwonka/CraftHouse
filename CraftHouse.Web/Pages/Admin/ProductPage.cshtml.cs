@@ -39,8 +39,17 @@ public class ProductPage : PageModel
     {
         Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
         ProductId = productId;
-        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
-        Product = product ?? throw new InvalidOperationException("Product not found");
+        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+
+        if (Product is null)
+        {
+            throw new NullReferenceException("Product does not exists");
+        }
+
+        ProductDto = new ProductDto
+        {
+            Description = Product.Description
+        };
     }
 
     public async Task<IActionResult> OnPostEditAsync(CancellationToken cancellationToken)
