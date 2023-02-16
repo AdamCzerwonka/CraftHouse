@@ -30,9 +30,12 @@ public class OrderModel : PageModel
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        var cart = _cartService.GetCartEntries();
+        var cart = _cartService.GetCartEntries().ToList();
+        if (!cart.Any())
+        {
+            throw new InvalidOperationException("Cannot place order with no items");
+        }
         var user = await _authService.GetLoggedInUserAsync(cancellationToken);
-
 
         await _orderRepository.CreateOrderAsync(cart, user!, cancellationToken);
         
