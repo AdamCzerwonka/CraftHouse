@@ -10,60 +10,48 @@ namespace CraftHouse.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly IAuthService _authService;
     private readonly AppDbContext _context;
     private readonly ICategoryRepository _categoryRepository;
-    private readonly ILogger<IndexModel> _logger;
 
     public IndexModel(IAuthService authService, AppDbContext context, ICategoryRepository categoryRepository, ILogger<IndexModel> logger)
     {
-        _authService = authService;
         _context = context;
         _categoryRepository = categoryRepository;
-        _logger = logger;
     }
 
-    [BindProperty]
-    public int CategoryId { get; set; } = 0;
+    public int? CategoryId { get; set; }
     public List<Category> Categories { get; set; } = null!;
     public List<Product> Products { get; set; } = null!;
     public int PageNumber { get; set; }
 
-    public async Task<IActionResult> OnGetAsync(int pageNumber, int categoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnGetAsync(int pageNumber, int? category, CancellationToken cancellationToken)
     {
         if (pageNumber <= 0)
         {
             throw new InvalidOperationException("Page does not exists");
         }
 
-        CategoryId = categoryId;
+        CategoryId = category;
         Categories = await _categoryRepository.GetCategoriesAsync(cancellationToken);
         PageNumber = pageNumber;
         const int productsPerPage = 15;
         var toSkip = productsPerPage * (pageNumber - 1);
 
-        IOrderedQueryable<Product> query;
+        var query = _context
+            .Products
+            .AsNoTracking()
+            .Where(x => x.DeletedAt == null);
 
-        _logger.LogInformation(CategoryId.ToString());
-        
-        if (CategoryId != 0)
+        if (category is not null)
         {
-            query = _context
-                .Products
-                .Where(x => x.DeletedAt == null && x.CategoryId == CategoryId)
-                .OrderBy(x => x.Id);
+            query = query
+                .Where(x => x.CategoryId == category);
         }
-        else
-        {
-            query = _context
-                .Products
-                .Where(x => x.DeletedAt == null)
-                .AsNoTracking()
-                .OrderBy(x => x.Id);
-        }
+
         var productCount = await query.CountAsync(cancellationToken);
 
         Products = await query
+            .OrderBy(x=>x.Id)
             .Skip(toSkip)
             .Take(productsPerPage)
             .AsNoTracking()
@@ -77,10 +65,5 @@ public class IndexModel : PageModel
         }
 
         return Page();
-    }
-
-    public async Task<IActionResult> OnPostCategoryAsync()
-    {
-        return Redirect($"/1?CategoryId={CategoryId}");
     }
 }

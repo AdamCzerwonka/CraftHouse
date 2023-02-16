@@ -42,27 +42,24 @@ public class OptionValuesManagement : PageModel
 
     [BindProperty]
     public OptionValueDto OptionValueDto { get; set; } = null!;
-    
+
     public OptionDto OptionDto { get; set; } = null!;
-    
+
     public List<OptionValue> OptionValues { get; set; } = null!;
 
-    public Option Option { get; set; }
+    public Option Option { get; set; } = null!;
 
     public List<string>? Errors { get; set; }
 
     public async Task OnGet(int optionId, CancellationToken cancellationToken)
     {
         OptionId = optionId;
-        Option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+        var option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
 
-        if (Option is null)
-        {
-            throw new NullReferenceException("Option does not exists");
-        }
+        Option = option ?? throw new NullReferenceException("Option does not exists");
 
         OptionValues = await _optionValueRepository.GetOptionValuesByOptionIdAsync(OptionId, cancellationToken);
-        OptionName = Option!.Name;
+        OptionName = Option.Name;
     }
 
     public async Task<IActionResult> OnPostRemoveAsync(CancellationToken cancellationToken)
@@ -102,7 +99,7 @@ public class OptionValuesManagement : PageModel
         {
             Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             OptionValues = await _optionValueRepository.GetOptionValuesByOptionIdAsync(OptionId, cancellationToken);
-            Option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+            Option = option;
             return Page();
         }
 
@@ -120,7 +117,7 @@ public class OptionValuesManagement : PageModel
         {
             throw new NullReferenceException("Option does not exists");
         }
-        
+
         OptionValueDto.OptionId = OptionId;
         var optionValue = OptionValueDto.MapToOptionValue();
         var validationResult = await _optionValueValidator.ValidateAsync(optionValue, cancellationToken);
@@ -129,7 +126,7 @@ public class OptionValuesManagement : PageModel
         {
             Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             OptionValues = await _optionValueRepository.GetOptionValuesByOptionIdAsync(OptionId, cancellationToken);
-            Option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+            Option = option;
             return Page();
         }
 
@@ -157,7 +154,8 @@ public class OptionValuesManagement : PageModel
         {
             Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
             OptionValues = await _optionValueRepository.GetOptionValuesByOptionIdAsync(OptionId, cancellationToken);
-            Option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken);
+            Option = await _optionRepository.GetOptionByIdAsync(OptionId, cancellationToken) ??
+                     throw new InvalidOperationException("Option does not exists");
             OptionValueDto.Value = "";
             OptionValueDto.Price = 0;
             return Page();

@@ -13,7 +13,7 @@
 
 @if (Model.Errors != null)
 {
-    @foreach (var error in @Model.Errors)
+    @foreach (var error in Model.Errors)
     {
         <div class="error">@error</div>
     }
@@ -36,14 +36,7 @@
     <select id="categoryIdEdit" asp-for="@Model.ProductDto.CategoryId">
         @foreach (var category in Model.Categories)
         {
-            if (@Model.Product.CategoryId == category.Id)
-            {
-                <option value="@category.Id" selected>@category.Name</option>
-            }
-            else
-            {
-                <option value="@category.Id">@category.Name</option>
-            }
+            <option value="@category.Id" selected="@(Model.Product.CategoryId == category.Id)">@category.Name</option>
         }
     </select>
 

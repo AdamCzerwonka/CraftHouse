@@ -15,9 +15,9 @@ public class OptionRepository : IOptionRepository
 
     public async Task<Product?> GetProductOptionsAsync(Product product, CancellationToken cancellationToken)
         => await _context
-         .Products
-         .Include(x => x.Options)
-         .FirstOrDefaultAsync(x => x.Id == product.Id, cancellationToken);
+            .Products
+            .Include(x => x.Options)
+            .FirstOrDefaultAsync(x => x.Id == product.Id, cancellationToken);
 
     public async Task<Option?> GetOptionByIdAsync(int id, CancellationToken cancellationToken)
         => await _context
@@ -34,7 +34,7 @@ public class OptionRepository : IOptionRepository
     }
 
     public async Task<List<Option>> GetOptionsByProductAsync(Product product, CancellationToken cancellationToken)
-     => await _context
+        => await _context
             .Options
             .AsNoTracking()
             .Where(x => x.ProductId == product.Id && x.DeletedAt == null)
@@ -48,16 +48,9 @@ public class OptionRepository : IOptionRepository
             .ToListAsync(cancellationToken);
 
     public async Task<bool> IsOptionDeletedAsync(Option option, CancellationToken cancellationToken)
-    {
-        var toCheck = await GetOptionByIdAsync(option.Id, cancellationToken);
-
-        if (toCheck is null)
-        {
-            throw new NullReferenceException("Option does not exists");
-        }
-        
-        return await Task.FromResult(toCheck.DeletedAt != null);
-    }
+        => await _context
+            .Options
+            .AnyAsync(x => x.Id == option.Id && x.DeletedAt != null, cancellationToken);
 
     public async Task UpdateOptionAsync(Option option, CancellationToken cancellationToken)
     {

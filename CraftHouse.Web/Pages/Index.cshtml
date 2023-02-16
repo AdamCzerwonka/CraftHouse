@@ -1,21 +1,18 @@
 ﻿@page "{pageNumber:int=1}"
-@using CraftHouse.Web.Entities
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
 <aside>
-    <form method="post" asp-page-handler="Category">
-        <input type="hidden" value="0" asp-for="CategoryId"/>
-        <input type="submit" value="All"/>
-    </form>
-    @foreach (var category in @Model.Categories)
+    <a asp-page="/Index" asp-route-pageNumber="1">All</a>
+    @foreach (var category in Model.Categories)
     {
-        <form method="post" asp-page-handler="Category">
-            <input type="hidden" value="@category.Id" asp-for="CategoryId"/>
-            <input type="submit" value="@category.Name"/>
-        </form>
+        <a asp-page="/Index"
+           asp-route-pageNumber="1"
+           asp-route-category="@category.Id">
+            @category.Name
+        </a>
     }
 </aside>
 
@@ -34,25 +31,19 @@
 <div class="products__pagination">
     @if (Model.PageNumber != 1)
     {
-        if (Model.CategoryId != 0)
-        {
-            <a href="/@(Model.PageNumber - 1)?CategoryId=@(Model.CategoryId)">Prev Page</a>
-        }
-        else
-        {
-            <a href="/@(Model.PageNumber - 1)">Prev Page</a>
-        }
+        <a asp-page="/Index"
+           asp-route-pageNumber="@(Model.PageNumber - 1)"
+           asp-route-category="@Model.CategoryId">
+            Prev Page
+        </a>
     }
     <span>@Model.PageNumber</span>
     @if ((int)Model.ViewData["lastPageNumber"]! != Model.PageNumber)
     {
-        if (Model.CategoryId != 0)
-        {
-            <a href="/@(Model.PageNumber + 1)?CategoryId=@(Model.CategoryId)">Next Page</a>
-        }
-        else
-        {
-            <a href="/@(Model.PageNumber + 1)">Next Page</a>
-        }
+        <a asp-page="/Index"
+           asp-route-pageNumber="@(Model.PageNumber + 1)"
+           asp-route-category="@Model.CategoryId">
+            Prev Page
+        </a>
     }
 </div>

@@ -36,6 +36,8 @@ public class User : EntityBase
 
     [Required]
     public string PasswordSalt { get; set; } = null!;
+
+    public ICollection<Order> Orders { get; set; } = null!;
 }
 
 public enum UserType

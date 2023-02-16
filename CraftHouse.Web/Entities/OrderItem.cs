@@ -1,25 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CraftHouse.Web.Entities;
 
-public class Option : EntityBase
+public class OrderItem : EntityBase
 {
     [Key]
     public int Id { get; set; }
 
     [Required]
-    public string Name { get; set; } = null!;
+    public int OrderId { get; set; }
 
     [Required]
-    public int MaxOccurs { get; set; }
-
-    public bool Required { get; set; }
-
     public int ProductId { get; set; }
+
+    [Required]
+    public float Value { get; set; }
+    
+    public Order Order { get; set; } = null!;
 
     public Product Product { get; set; } = null!;
 
-    public ICollection<OptionValue> OptionValues { get; set; } = null!;
     public ICollection<OrderItemOption> OrderItemOptions { get; set; } = null!;
 }
