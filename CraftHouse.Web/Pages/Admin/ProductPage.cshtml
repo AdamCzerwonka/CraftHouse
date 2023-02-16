@@ -7,9 +7,9 @@
 
 @if (Model.Errors != null)
 {
-    @foreach (var error in @Model.Errors)
+    @foreach (var error in Model.Errors)
     {
-    <div class="error">@error</div>
+        <div class="error">@error</div>
     }
 }
 
@@ -22,16 +22,8 @@
 
     <label for="isAvailableEdit">Is available</label>
     <select id="isAvailableEdit" asp-for="@Model.ProductDto.IsAvailable">
-        @if (@Model.Product.IsAvailable.Equals(true))
-        {
-            <option value="false">unavailable</option>
-            <option value="true" selected>available</option>
-        }
-        else
-        {
-            <option value="true">available</option>
-            <option value="false" selected>unavailable</option>
-        }
+        <option value="false" selected="!@Model.Product.IsAvailable">unavailable</option>
+        <option value="true" selected="@Model.Product.IsAvailable">available</option>
     </select>
 
     <label for="priceEdit">Price</label>
@@ -44,14 +36,7 @@
     <select id="categoryIdEdit" asp-for="@Model.ProductDto.CategoryId">
         @foreach (var category in Model.Categories)
         {
-            if (@Model.Product.CategoryId == category.Id)
-            {
-                <option value="@category.Id" selected>@category.Name</option>
-            }
-            else
-            {
-                <option value="@category.Id">@category.Name</option>
-            }
+            <option value="@category.Id" selected="@(Model.Product.CategoryId == category.Id)">@category.Name</option>
         }
     </select>
 

@@ -15,7 +15,7 @@ public class CartService : ICartService
 
     public void AddCartEntry(CartEntry entry)
     {
-        var cart = _session.GetFromJson<List<CartEntry>>(SessionCartKey);
+        var cart = GetEntriesFromSession();
         
         cart.Add(entry);
 
@@ -23,11 +23,11 @@ public class CartService : ICartService
     }
 
     public IEnumerable<CartEntry> GetCartEntries()
-        => _session.GetFromJson<List<CartEntry>>(SessionCartKey);
+        => GetEntriesFromSession();
 
     public void RemoveCartEntry(Guid entryId)
     {
-        var cart = _session.GetFromJson<List<CartEntry>>(SessionCartKey);
+        var cart = GetEntriesFromSession();
         var entryToDel = cart.FirstOrDefault(x => x.Id == entryId);
         if (entryToDel is null)
         {
@@ -37,4 +37,12 @@ public class CartService : ICartService
         
         _session.SetAsJson(SessionCartKey, cart);
     }
+
+    public void ClearCart()
+    {
+        _session.Remove(SessionCartKey);
+    }
+
+    private List<CartEntry> GetEntriesFromSession()
+        => _session.GetFromJson<List<CartEntry>>(SessionCartKey);
 }

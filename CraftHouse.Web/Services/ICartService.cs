@@ -7,4 +7,5 @@ public interface ICartService
     void AddCartEntry(CartEntry entry);
     IEnumerable<CartEntry> GetCartEntries();
     void RemoveCartEntry(Guid entryId);
+    void ClearCart();
 }

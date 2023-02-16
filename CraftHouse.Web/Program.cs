@@ -54,6 +54,7 @@ try
     services.AddTransient<IOptionRepository, OptionRepository>();
     services.AddTransient<IOptionValueRepository, OptionValueRepository>();
     services.AddTransient<ICartService, CartService>();
+    services.AddTransient<IOrderRepository, OrderRepository>();
     services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
     services.Configure<RouteOptions>(options =>

@@ -4,6 +4,7 @@ using CraftHouse.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CraftHouse.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230214192215_AddOrderItemValue")]
+    partial class AddOrderItemValue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,45 +197,6 @@ namespace CraftHouse.Web.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("CraftHouse.Web.Entities.OrderItemOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OptionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderItemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<float>("Value")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OptionId");
-
-                    b.HasIndex("OrderItemId");
-
-                    b.ToTable("OrderItemOptions");
-                });
-
             modelBuilder.Entity("CraftHouse.Web.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -387,25 +351,6 @@ namespace CraftHouse.Web.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("CraftHouse.Web.Entities.OrderItemOption", b =>
-                {
-                    b.HasOne("CraftHouse.Web.Entities.Option", "Option")
-                        .WithMany("OrderItemOptions")
-                        .HasForeignKey("OptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CraftHouse.Web.Entities.OrderItem", "OrderItem")
-                        .WithMany("OrderItemOptions")
-                        .HasForeignKey("OrderItemId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Option");
-
-                    b.Navigation("OrderItem");
-                });
-
             modelBuilder.Entity("CraftHouse.Web.Entities.Product", b =>
                 {
                     b.HasOne("CraftHouse.Web.Entities.Category", "Category")
@@ -425,18 +370,11 @@ namespace CraftHouse.Web.Migrations
             modelBuilder.Entity("CraftHouse.Web.Entities.Option", b =>
                 {
                     b.Navigation("OptionValues");
-
-                    b.Navigation("OrderItemOptions");
                 });
 
             modelBuilder.Entity("CraftHouse.Web.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("CraftHouse.Web.Entities.OrderItem", b =>
-                {
-                    b.Navigation("OrderItemOptions");
                 });
 
             modelBuilder.Entity("CraftHouse.Web.Entities.Product", b =>
