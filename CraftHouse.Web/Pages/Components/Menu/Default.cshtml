@@ -11,6 +11,9 @@
         <li class="nav__item">
             <a class="nav__link" asp-page="/Index">Contact</a>
         </li>
+        <li class="nav__item">
+            <a class="nav__link" asp-page="/Cart/Index">Cart @Model.CartItemCount</a>
+        </li>
         @if (Model.User == null)
         {
             <li class="nav__item left">
