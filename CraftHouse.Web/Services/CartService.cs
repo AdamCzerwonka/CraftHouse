@@ -37,4 +37,9 @@ public class CartService : ICartService
         
         _session.SetAsJson(SessionCartKey, cart);
     }
+
+    public void ClearCart()
+    {
+        _session.Remove(SessionCartKey);
+    }
 }
