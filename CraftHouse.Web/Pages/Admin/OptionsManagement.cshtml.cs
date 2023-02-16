@@ -1,12 +1,10 @@
-﻿using CraftHouse.Web.Data;
-using CraftHouse.Web.DTOs;
+﻿using CraftHouse.Web.DTOs;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace CraftHouse.Web.Pages.Admin;
 

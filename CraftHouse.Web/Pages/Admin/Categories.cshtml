@@ -24,18 +24,18 @@
     <table class="table">
         <thead>
         <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th class="table--center">Actions</th>
+            <th class="table--center">ID</th>
+            <th class="table--large_column">Name</th>
+            <th class="table--center table--small_column">Actions</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var category in Model.Categories)
         {
             <tr>
-                <td>@category.Id</td>
-                <td>@category.Name</td>
-                <td class="table--center">
+                <td class="table--center">@category.Id</td>
+                <td class="table--large_column">@category.Name</td>
+                <td class="table--center table--small_column">
                     <a class="button" asp-page="/Admin/CategoryPage" asp-route-id="@category.Id">Show details</a>
                 </td>
             </tr>

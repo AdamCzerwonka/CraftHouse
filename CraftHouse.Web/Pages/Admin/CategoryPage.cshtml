@@ -35,14 +35,14 @@
 <h1>Products with this category</h1>
 <table class="table">
     <thead>
-    <th class="table--center">ID</th>
+    <th class="table--center table--xsmall_column">ID</th>
     <th>Name</th>
     </thead>
     <tbody>
     @foreach (var product in Model.Category.Products)
     {
         <tr>
-            <td class="table--center">@product.Id</td>
+            <td class="table--center table--xsmall_column">@product.Id</td>
             <td>@product.Name</td>
         </tr>
     }
