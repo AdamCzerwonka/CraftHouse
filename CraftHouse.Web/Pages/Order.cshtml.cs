@@ -35,6 +35,8 @@ public class OrderModel : PageModel
 
 
         await _orderRepository.CreateOrderAsync(cart, user!, cancellationToken);
+        
+        _cartService.ClearCart();
 
         return Redirect("/Index");
     }
