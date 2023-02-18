@@ -24,8 +24,15 @@ public class OrderModel : PageModel
         _orderRepository = orderRepository;
     }
 
-    public void OnGet()
+    [BindProperty]
+    public CreateOrderModel CreateOrder { get; set; } = null!;
+
+    public User UserData { get; set; }
+
+    public async Task OnGetAsync(CancellationToken cancellationToken)
     {
+        var user =await _authService.GetLoggedInUserAsync(cancellationToken);
+        UserData = user ?? throw new InvalidOperationException("User cannot be null");
     }
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
@@ -36,11 +43,14 @@ public class OrderModel : PageModel
             throw new InvalidOperationException("Cannot place order with no items");
         }
         var user = await _authService.GetLoggedInUserAsync(cancellationToken);
+        UserData = user ?? throw new InvalidOperationException("User cannot be null");
 
-        await _orderRepository.CreateOrderAsync(cart, user!, cancellationToken);
+        await _orderRepository.CreateOrderAsync(cart, UserData, cancellationToken);
         
         _cartService.ClearCart();
 
         return Redirect("/Index");
     }
 }
+
+public record CreateOrderModel(string AddressLine, string City, string Postal, string Telephone);

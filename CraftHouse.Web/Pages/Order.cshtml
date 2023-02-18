@@ -2,6 +2,21 @@
 @model CraftHouse.Web.Pages.OrderModel
 
 <form method="post">
-   <h2>Add some fileds here</h2> 
-   <input type="submit" value="Place Order"/>
+    <div>
+        <label asp-for="CreateOrder.AddressLine">Address line</label>
+        <input type="text" asp-for="CreateOrder.AddressLine" value="@Model.UserData.AddressLine"/>
+    </div>
+    <div>
+        <label asp-for="CreateOrder.City">City</label>
+        <input type="text" asp-for="CreateOrder.City" value="@Model.UserData.City"/>
+    </div>
+    <div>
+        <label asp-for="CreateOrder.Postal">Postal code</label>
+        <input type="text" asp-for="CreateOrder.Postal" value="@Model.UserData.PostalCode"/>
+    </div>
+    <div>
+        <label asp-for="CreateOrder.Telephone">Telephone</label>
+        <input type="text" asp-for="CreateOrder.Telephone" value="@Model.UserData.TelephoneNumber"/>
+    </div>
+    <input type="submit" value="Place Order"/>
 </form>
