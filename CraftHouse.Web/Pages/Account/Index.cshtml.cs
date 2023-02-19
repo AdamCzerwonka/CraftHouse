@@ -12,11 +12,13 @@ public class IndexModel : PageModel
 {
     private readonly IAuthService _authService;
     private readonly IUserRepository _userRepository;
+    private readonly IOrderRepository _orderRepository;
 
-    public IndexModel(IAuthService authService, IUserRepository userRepository)
+    public IndexModel(IAuthService authService, IUserRepository userRepository, IOrderRepository orderRepository)
     {
         _authService = authService;
         _userRepository = userRepository;
+        _orderRepository = orderRepository;
     }
 
     [BindProperty]
@@ -26,9 +28,12 @@ public class IndexModel : PageModel
 
     public List<string> Errors { get; set; } = new();
 
+    public  List<Order> Orders { get; set; }
+
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
         UserData = (await _authService.GetLoggedInUserAsync(cancellationToken))!;
+        Orders = (await _orderRepository.GetOrdersByUserAsync(UserData.Id, cancellationToken));
     }
 
     public async Task<IActionResult> OnPostPasswordAsync(CancellationToken cancellationToken)
