@@ -25,6 +25,22 @@ public class OrderRepository : IOrderRepository
         await strategy.Execute(async () => await CreateOrderAsyncTransaction(cartEntries, user, cancellationToken));
     }
 
+    public async Task<List<Order>> GetOrdersByUserAsync(int id, CancellationToken cancellationToken)
+        => await _context.Orders.Where(x => x.UserId == id).AsNoTracking().ToListAsync(cancellationToken);
+
+    public async Task<List<Order>> GetOrdersAsync(CancellationToken cancellationToken)
+        => await _context.Orders.AsNoTracking().ToListAsync(cancellationToken);
+
+    public async Task<Order?> GetOrderByIdAsync(int id, CancellationToken cancellationToken)
+        => await _context.Orders.Where(x => x.Id == id).AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+
+    public async Task UpdateOrderAsync(Order order, CancellationToken cancellationToken)
+    {
+        order.UpdatedAt = DateTime.Now;
+        _context.Update(order);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task CreateOrderAsyncTransaction(IEnumerable<CartEntry> cartEntries, User user,
         CancellationToken cancellationToken)
     {
