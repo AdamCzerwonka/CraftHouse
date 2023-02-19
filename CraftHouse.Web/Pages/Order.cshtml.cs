@@ -62,7 +62,8 @@ public class OrderModel : PageModel
             AddressLine = CreateOrder.AddressLine,
             City = CreateOrder.City,
             PostalCode = CreateOrder.Postal,
-            Telephone = CreateOrder.Telephone
+            Telephone = CreateOrder.Telephone,
+            Comment = CreateOrder.Comment
         };
 
         await _orderRepository.CreateOrderAsync(order, cart, cancellationToken);

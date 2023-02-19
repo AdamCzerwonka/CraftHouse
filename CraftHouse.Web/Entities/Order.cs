@@ -25,6 +25,8 @@ public class Order : EntityBase
     [Required]
     public string AddressLine { get; set; } = null!;
 
+    public string? Comment { get; set; }
+
     [Required]
     public int UserId { get; set; }
     public User User { get; set; } = null!;
