@@ -1,3 +1,4 @@
+using System.Globalization;
 using CraftHouse.Web.Data;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Options;
@@ -5,6 +6,7 @@ using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using CraftHouse.Web.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -84,6 +86,16 @@ try
 
     app.UseSession();
     app.UseAuthorization();
+
+    app.UseRequestLocalization(options =>
+    {
+        var cultureInfo = new CultureInfo("en-US");
+        options.DefaultRequestCulture = new RequestCulture(cultureInfo);
+        options.SupportedCultures = new List<CultureInfo>
+        {
+            cultureInfo
+        };
+    });
 
     app.MapRazorPages();
 
