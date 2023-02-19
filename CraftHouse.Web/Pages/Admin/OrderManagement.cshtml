@@ -1,0 +1,17 @@
+﻿@page "{orderId}"
+@using CraftHouse.Web.Entities
+@model CraftHouse.Web.Pages.Admin.OrderManagement
+
+
+<form method="post">
+    <input type="hidden" asp-for="OrderId" value="@Model.OrderId"/>
+    <div>
+        @foreach (var option in Enum.GetNames<OrderStatus>())
+        {
+            <input id="@option" type="radio" asp-for="OrderStatus" value="@option" checked="@(Model.OrderData.OrderStatus == Enum.Parse<OrderStatus>(option))"/>
+            <label for="@option">@option</label>
+        }
+    </div>
+    
+    <input type="submit" value="Update"/>
+</form>
