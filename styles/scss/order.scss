@@ -1,0 +1,46 @@
+@import "_variables";
+@import "form";
+
+.order-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto, auto;
+
+  .order__h2 {
+    align-self: center;
+    font-size: 1.8rem;
+  }
+
+  .order__form {
+    grid-column: 1 / span 3;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .order__header {
+    grid-column: 1 / span 4;
+
+    h1 {
+      font-size: 2.3rem;
+    }
+  }
+
+  .order__summary {
+    grid-column: 4;
+    display: flex;
+    flex-direction: column;
+
+    .summary__line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.3rem;
+    }
+
+    .summary__spacer {
+      height: 0;
+      border: 1px solid $main-red;
+      margin: 10px 15px;
+    }
+  }
+}

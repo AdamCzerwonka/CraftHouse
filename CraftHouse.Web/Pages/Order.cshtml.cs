@@ -1,11 +1,9 @@
-﻿using CraftHouse.Web.Data;
-using CraftHouse.Web.Entities;
+﻿using CraftHouse.Web.Entities;
 using CraftHouse.Web.Infrastructure;
 using CraftHouse.Web.Repositories;
 using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace CraftHouse.Web.Pages;
 
@@ -27,11 +25,11 @@ public class OrderModel : PageModel
     [BindProperty]
     public CreateOrderModel CreateOrder { get; set; } = null!;
 
-    public User UserData { get; set; }
+    public User UserData { get; set; } = null!;
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
-        var user =await _authService.GetLoggedInUserAsync(cancellationToken);
+        var user = await _authService.GetLoggedInUserAsync(cancellationToken);
         UserData = user ?? throw new InvalidOperationException("User cannot be null");
     }
 
@@ -42,11 +40,12 @@ public class OrderModel : PageModel
         {
             throw new InvalidOperationException("Cannot place order with no items");
         }
+
         var user = await _authService.GetLoggedInUserAsync(cancellationToken);
         UserData = user ?? throw new InvalidOperationException("User cannot be null");
 
         await _orderRepository.CreateOrderAsync(cart, UserData, cancellationToken);
-        
+
         _cartService.ClearCart();
 
         return Redirect("/Index");
