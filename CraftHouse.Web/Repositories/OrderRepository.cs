@@ -45,7 +45,8 @@ public class OrderRepository : IOrderRepository
         CancellationToken cancellationToken)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-
+        float totalCost = 0;
+        
         try
         {
             var order = new Order()
@@ -76,6 +77,8 @@ public class OrderRepository : IOrderRepository
                     Value = product.Price
                 };
 
+                totalCost += product.Price;
+
                 _context.OrderItems.Add(orderItem);
                 await _context.SaveChangesAsync(cancellationToken);
 
@@ -104,12 +107,17 @@ public class OrderRepository : IOrderRepository
                             Value = value.Price
                         };
 
+                        totalCost += value.Price;
+
                         _context.OrderItemOptions.Add(orderItemOption);
                         await _context.SaveChangesAsync(cancellationToken);
                     }
                 }
             }
 
+            order.Value = totalCost;
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync(cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
         }
