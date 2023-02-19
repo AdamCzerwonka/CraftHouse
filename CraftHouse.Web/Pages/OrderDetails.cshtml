@@ -1,0 +1,42 @@
+﻿@page "{orderId}"
+@using CraftHouse.Web.Entities
+@model CraftHouse.Web.Pages.OrderDetails
+
+
+<h1>Details for order #@Model.OrderId</h1>
+<table>
+    <thead>
+    <th>ID</th>
+    <th>Order ID</th>
+    <th>Product ID</th>
+    <th>Value</th>
+    </thead>
+
+    <tbody>
+    @foreach (var orderItem in @Model.OrderItems)
+    {
+        <tr>
+            <td>PRODUCT</td>
+        </tr>
+        <tr>
+            <td>@orderItem.Id</td>
+            <td>@orderItem.OrderId</td>
+            <td>@orderItem.ProductId</td>
+            <td>@orderItem.Value</td>
+        </tr>
+        <tr>
+            <td>OPTIONS</td>
+        </tr>
+        @foreach (var option in @Model.OrderItemOptions.Where(x => x.OrderItemId == orderItem.Id))
+        {
+            
+            <tr>
+                <td>@option.Id</td>
+                <td>@option.OptionId</td>
+                <td>@option.Name</td>
+                <td>@option.Value</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
