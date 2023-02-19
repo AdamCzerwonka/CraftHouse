@@ -18,29 +18,52 @@ public class OrderRepository : IOrderRepository
         _logger = logger;
     }
 
-    public async Task CreateOrderAsync(IEnumerable<CartEntry> cartEntries, User user,
+    public async Task CreateOrderAsync(Order order, IEnumerable<CartEntry> cartEntries,
         CancellationToken cancellationToken)
     {
         var strategy = _context.Database.CreateExecutionStrategy();
-        await strategy.Execute(async () => await CreateOrderAsyncTransaction(cartEntries, user, cancellationToken));
+        await strategy.Execute(async () => await CreateOrderAsyncTransaction(order, cartEntries, cancellationToken));
     }
 
-    private async Task CreateOrderAsyncTransaction(IEnumerable<CartEntry> cartEntries, User user,
+    public async Task<float> CalculateCartValueAsync(IEnumerable<CartEntry> cartEntries,
+        CancellationToken cancellationToken)
+    {
+        var value = 0.0f;
+        foreach (var cartEntry in cartEntries)
+        {
+            var product = await _productRepository.GetProductByIdAsync(cartEntry.ProductId, cancellationToken);
+            value += product!.Price;
+
+            if (cartEntry.Options is null)
+            {
+                continue;
+            }
+
+            foreach (var cartEntryOption in cartEntry.Options)
+            {
+                var optionValues = await _context
+                    .OptionValues
+                    .AsNoTracking()
+                    .Where(x => x.OptionId == cartEntryOption.OptionId)
+                    .ToListAsync(cancellationToken);
+
+                foreach (var optionValue in cartEntryOption.Values)
+                {
+                    value += optionValues.First(x => x.Id == optionValue).Price;
+                }
+            }
+        }
+
+        return value;
+    }
+
+    private async Task CreateOrderAsyncTransaction(Order order, IEnumerable<CartEntry> cartEntries,
         CancellationToken cancellationToken)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
         try
         {
-            var order = new Order()
-            {
-                AddressLine = user.AddressLine,
-                City = user.City,
-                PostalCode = user.PostalCode,
-                Telephone = user.TelephoneNumber,
-                UserId = user.Id
-            };
-
             _context.Orders.Add(order);
             await _context.SaveChangesAsync(cancellationToken);
 

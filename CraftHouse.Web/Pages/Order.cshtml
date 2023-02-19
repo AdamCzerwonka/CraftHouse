@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Globalization
 @model CraftHouse.Web.Pages.OrderModel
 @{
     ViewData["title"] = "Order";
@@ -20,8 +21,8 @@
             <input class="form--red" type="text" asp-for="CreateOrder.Postal" value="@Model.UserData.PostalCode"/>
             <label asp-for="CreateOrder.Telephone">Telephone</label>
             <input class="form--red" type="text" asp-for="CreateOrder.Telephone" value="@Model.UserData.TelephoneNumber"/>
-            <label>Add a comment to your order</label>
-            <textarea class="form--red"></textarea>
+            <label asp-for="CreateOrder.Comment">Add a comment to your order</label>
+            <textarea asp-for="CreateOrder.Comment" class="form--red"></textarea>
             <input class="button button--red form--red" type="submit" value="Place Order"/>
         </form>
     </div>
@@ -29,16 +30,16 @@
         <h2 class="order__h2">Summary</h2>
         <div class="summary__line">
             <div>Order value:</div>
-            <div>$100.00</div>
+            <div>@Model.CartValue.ToString("c2")</div>
         </div>
         <div class="summary__line">
             <div>Shipping cost:</div>
-            <div>$5.00</div>
+            <div>@Model.ShippingCost.ToString("c2")</div>
         </div>
         <div class="summary__spacer"></div>
         <div class="summary__line">
             <div>Total cost:</div>
-            <div>$105.00</div>
+            <div>@Model.OrderValue.ToString("c2")</div>
         </div>
     </div>
 </div>

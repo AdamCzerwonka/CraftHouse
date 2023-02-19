@@ -5,5 +5,6 @@ namespace CraftHouse.Web.Repositories;
 
 public interface IOrderRepository
 {
-   Task CreateOrderAsync(IEnumerable<CartEntry> cartEntries, User user, CancellationToken cancellationToken);
+   Task CreateOrderAsync(Order order, IEnumerable<CartEntry> cartEntries,CancellationToken cancellationToken);
+   Task<float> CalculateCartValueAsync(IEnumerable<CartEntry> cartEntries, CancellationToken cancellationToken);
 }
