@@ -2,8 +2,17 @@
 @using CraftHouse.Web.Entities
 @model CraftHouse.Web.Pages.Admin.OrderManagement
 
+@{
+    ViewData["title"] = "Manage order";
+    ViewData["styles"] = "orders";
+}
 
-<form method="post">
+<a class="return" asp-page="/admin/orders">
+    <img class="return__arrow" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+    <p class="return__text">Return</p>
+</a>
+
+<form method="post" class="form">
     <input type="hidden" asp-for="OrderId" value="@Model.OrderId"/>
     <div>
         @foreach (var option in Enum.GetNames<OrderStatus>())
@@ -13,5 +22,5 @@
         }
     </div>
     
-    <input type="submit" value="Update"/>
+    <input class="button button--teal" type="submit" value="Update"/>
 </form>

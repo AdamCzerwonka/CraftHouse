@@ -1,27 +1,32 @@
 ﻿@page
 @model CraftHouse.Web.Pages.Admin.Orders
 
-<table>
+@{
+    ViewData["title"] = "Orders";
+    ViewData["styles"] = "orders";
+}
+
+<table class="table">
     <thead>
-    <th>ID</th>
-    <th>User ID</th>
+    <th class="table--center">ID</th>
+    <th class="table--center">User ID</th>
     <th>Price</th>
     <th>Status</th>
     <th>Order date</th>
-    <th>Actions</th>
+    <th class="table--center">Actions</th>
     </thead>
     <tbody>
     @foreach (var order in @Model.OrdersList)
     {
         <tr>
-            <td>@order.Id</td>
-            <td>@order.UserId</td>
+            <td class="table--center">@order.Id</td>
+            <td class="table--center">@order.UserId</td>
             <td>@order.Value</td>
             <td>@order.OrderStatus</td>
             <td>@order.CreatedAt</td>
-            <td>
-                <a asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
-                <a asp-page="/Admin/OrderManagement" asp-route-orderId="@order.Id">Edit</a>
+            <td class="table--flex">
+                <a class="button" asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
+                <a class="button" asp-page="/Admin/OrderManagement" asp-route-orderId="@order.Id">Edit</a>
             </td>
         </tr>
     }

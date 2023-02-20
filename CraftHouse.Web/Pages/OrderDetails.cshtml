@@ -2,41 +2,49 @@
 @using CraftHouse.Web.Entities
 @model CraftHouse.Web.Pages.OrderDetails
 
+@{
+    ViewData["title"] = "Order details";
+    ViewData["styles"] = "orders";
+}
 
 <h1>Details for order #@Model.OrderId</h1>
-<table>
-    <thead>
-    <th>ID</th>
-    <th>Order ID</th>
-    <th>Product ID</th>
-    <th>Value</th>
-    </thead>
+@foreach (var orderItem in @Model.OrderItems)
+{
+    <table class="table">
+        <thead>
+        <th class="table--center">ID</th>
+        <th>Product category</th>
+        <th>Product name</th>
+        <th>Value</th>
+        </thead>
 
-    <tbody>
-    @foreach (var orderItem in @Model.OrderItems)
-    {
+        <tbody>
         <tr>
-            <td>PRODUCT</td>
-        </tr>
-        <tr>
-            <td>@orderItem.Id</td>
-            <td>@orderItem.OrderId</td>
-            <td>@orderItem.ProductId</td>
+            <td class="table--center">@orderItem.Id</td>
+            <td>@orderItem.Product.Category.Name</td>
+            <td>@orderItem.Product.Name</td>
             <td>@orderItem.Value</td>
         </tr>
-        <tr>
-            <td>OPTIONS</td>
-        </tr>
-        @foreach (var option in @Model.OrderItemOptions.Where(x => x.OrderItemId == orderItem.Id))
+        @if (@Model.OrderItemOptions.Any(x => x.OrderItemId == orderItem.Id))
         {
+            <thead>
+            <th class="table--center table--red_background">ID</th>
+            <th class="table--red_background">Option name</th>
+            <th class="table--red_background">Option value</th>
+            <th class="table--red_background"></th>
+            </thead> 
+            @foreach (var option in @Model.OrderItemOptions.Where(x => x.OrderItemId == orderItem.Id))
+            {
             
-            <tr>
-                <td>@option.Id</td>
-                <td>@option.OptionId</td>
-                <td>@option.Name</td>
-                <td>@option.Value</td>
-            </tr>
+
+                <tr>
+                    <td class="table--center">@option.Id</td>
+                    <td>@option.Name</td>
+                    <td>@option.Value</td>
+                    <td></td>
+                </tr>
+            }
         }
-    }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+}

@@ -1,9 +1,10 @@
 ﻿@page "{handler?}"
+@using CraftHouse.Web.Entities
 @model CraftHouse.Web.Pages.Account.IndexModel
 
 @{
     ViewData["title"] = "My account";
-    ViewData["styles"] = "form";
+    ViewData["styles"] = "orders";
 }
 
 @foreach (var error in Model.Errors)
@@ -24,26 +25,55 @@
     <input class="button button--red form--red" type="submit" value="Change password"/>
 </form>
 
-<table>
+
+<h1>Orders</h1>
+<table class="table">
     <thead>
-    <th>ID</th>
-    <th>Price</th>
+    <th class="table--center">ID</th>
+    <th class="table--medium_column">Price</th>
     <th>Status</th>
-    <th>Order date</th>
-    <th>Actions</th>
+    <th class="table--medium_column">Order date</th>
+    <th class="table--small_column table--center">Actions</th>
     </thead>
     <tbody>
-        @foreach (var order in @Model.Orders)
+    @foreach (var order in @Model.Orders)
+    {
+        if (@order.OrderStatus == OrderStatus.Canceled)
         {
-            <tr>
-                <td>@order.Id</td>
+            <tr class="table--light_red_background">
+                <td class="table--center">@order.Id</td>
                 <td>@order.Value</td>
                 <td>@order.OrderStatus</td>
                 <td>@order.CreatedAt</td>
-                <td>
-                    <a asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
+                <td class="table--center">
+                    <a class="button" asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
+                </td>
+            </tr>
+        } else if (@order.OrderStatus == OrderStatus.Finished)
+        {
+            <tr class="table--light_blue_background">
+                <td class="table--center">@order.Id</td>
+                <td>@order.Value</td>
+                <td>@order.OrderStatus</td>
+                <td>@order.CreatedAt</td>
+                <td class="table--center">
+                    <a class="button" asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
                 </td>
             </tr>
         }
+        else
+        {
+            <tr>
+                <td class="table--center">@order.Id</td>
+                <td>@order.Value</td>
+                <td>@order.OrderStatus</td>
+                <td>@order.CreatedAt</td>
+                <td class="table--center">
+                    <a class="button" asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
+                </td>
+            </tr>
+        }
+        
+    }
     </tbody>
 </table>

@@ -14,5 +14,5 @@ public class OrderItemRepository : IOrderItemRepository
     }
 
     public async Task<List<OrderItem>> GetOrderItemByOrderIdAsync(int id, CancellationToken cancellationToken)
-        => await _context.OrderItems.Where(x => x.OrderId == id).AsNoTracking().ToListAsync(cancellationToken);
+        => await _context.OrderItems.Include(x => x.Product.Category).Where(x => x.OrderId == id).AsNoTracking().ToListAsync(cancellationToken);
 }
