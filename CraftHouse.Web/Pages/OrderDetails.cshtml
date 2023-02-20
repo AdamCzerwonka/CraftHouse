@@ -28,15 +28,13 @@
         @if (@Model.OrderItemOptions.Any(x => x.OrderItemId == orderItem.Id))
         {
             <thead>
-            <th class="table--center table--red_background">ID</th>
-            <th class="table--red_background">Option name</th>
-            <th class="table--red_background">Option value</th>
-            <th class="table--red_background"></th>
+            <th class="table--center table--light_red_background">ID</th>
+            <th class="table--light_red_background">Option name</th>
+            <th class="table--light_red_background">Option value</th>
+            <th class="table--light_red_background"></th>
             </thead> 
             @foreach (var option in @Model.OrderItemOptions.Where(x => x.OrderItemId == orderItem.Id))
             {
-            
-
                 <tr>
                     <td class="table--center">@option.Id</td>
                     <td>@option.Name</td>

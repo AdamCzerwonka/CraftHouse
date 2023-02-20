@@ -44,11 +44,11 @@
     }
 
     .table--light_red_background {
-        background-color: lighten($main-red, 10);
+        background-color: lighten($main-red, 10) !important;
     }
 
     .table--light_blue_background {
-        background-color: lighten($main-blue, 10);
+        background-color: lighten($main-blue, 10) !important;
     }
 
     .table--center {
