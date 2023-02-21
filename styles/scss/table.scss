@@ -20,6 +20,15 @@
         background-color: $main-teal;
         color: $main-black;
         user-select: none;
+
+        a {
+            color: $main-black;
+            text-decoration: underline;
+
+            &:visited {
+                color: $main-black;
+            }
+        }
     }
 
     tbody tr {
