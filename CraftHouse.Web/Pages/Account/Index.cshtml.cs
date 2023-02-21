@@ -33,7 +33,7 @@ public class IndexModel : PageModel
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
         UserData = (await _authService.GetLoggedInUserAsync(cancellationToken))!;
-        Orders = (await _orderRepository.GetOrdersByUserAsync(UserData.Id, cancellationToken));
+        Orders = (await _orderRepository.GetOrdersByUserIdAsync(UserData.Id, cancellationToken));
     }
 
     public async Task<IActionResult> OnPostPasswordAsync(CancellationToken cancellationToken)
