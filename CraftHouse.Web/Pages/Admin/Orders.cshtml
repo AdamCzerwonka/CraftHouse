@@ -6,13 +6,33 @@
     ViewData["styles"] = "orders";
 }
 
+@foreach (var user in @Model.Users)
+{
+    <a asp-page="/Admin/Orders" asp-route-userId="@user.Id" asp-route-orderBy="@Model.OrderBy"
+       asp-route-isascending="@Model.IsAscending">
+        @user.Id">ID: @user.Id, @user.FirstName @user.LastName
+    </a>
+    <br/>
+}
+
+
 <table class="table">
     <thead>
-    <th class="table--center">ID</th>
-    <th class="table--center">User ID</th>
-    <th>Price</th>
-    <th>Status</th>
-    <th>Order date</th>
+    <th class="table--center">
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="id" asp-route-isascending="@(!Model.IsAscending)">ID</a>
+    </th>
+    <th class="table--center">
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="userid" asp-route-isascending="@(!Model.IsAscending)">User ID</a>
+    </th>
+    <th>
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="price" asp-route-isascending="@(!Model.IsAscending)">Price</a>
+    </th>
+    <th>
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="status" asp-route-isascending="@(!Model.IsAscending)">Status</a>
+    </th>
+    <th>
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="order date" asp-route-isascending="@(!Model.IsAscending)">Order date</a>
+    </th>
     <th class="table--center">Actions</th>
     </thead>
     <tbody>
