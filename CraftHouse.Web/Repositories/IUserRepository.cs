@@ -9,7 +9,7 @@ public interface IUserRepository
     Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken);
     Task UpdateUserAsync(User user, CancellationToken cancellationToken);
     Task DeleteUserAsync(User user, CancellationToken cancellationToken);
-    IEnumerable<User> Get();
+    Task<List<User>> GetAllUsersAsync(CancellationToken cancellationToken);
     Task<Result> CreateUserAsync(User user, string password, CancellationToken cancellationToken);
     Task<Result> UpdateUserPasswordAsync(User user, string password, CancellationToken cancellationToken);
 }
