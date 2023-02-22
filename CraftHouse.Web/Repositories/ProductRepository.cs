@@ -23,6 +23,55 @@ public class ProductRepository : IProductRepository
             .AsNoTracking()
             .ToListAsync(cancellationToken);
 
+    public async Task<List<Product>> GetProductsByCategoryWithSortingAsync(int pageNumber, int? categoryId, string? sortBy, bool? isAscending,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context
+            .Products
+            .AsNoTracking()
+            .Where(x => x.DeletedAt == null);
+
+        if (categoryId is not null)
+        {
+            query = query.Where(x => x.CategoryId == categoryId);
+        }
+        
+        sortBy = sortBy?.ToLower();
+        isAscending ??= true;
+
+        query = (sortBy, isAscending) switch
+        {
+            ("name", true) => query.OrderBy(x => x.Name),
+            ("price", true) => query.OrderBy(x => x.Price),
+            ("name", false) => query.OrderByDescending(x => x.Name),
+            ("priceDesc", false) => query.OrderByDescending(x => x.Price),
+            _ => query.OrderBy(x => x.Id)
+        };
+
+        const int productsPerPage = 15;
+        var productsToSkip = productsPerPage * (pageNumber - 1);
+        
+        return await query
+            .Skip(productsToSkip)
+            .Take(productsPerPage)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetProductsCountByCategoryAsync(int? categoryId, CancellationToken cancellationToken)
+    {
+        var query = _context
+            .Products
+            .AsNoTracking()
+            .Where(x => x.DeletedAt == null);
+
+        if (categoryId is not null)
+        {
+            query = query.Where(x => x.CategoryId == categoryId);
+        }
+
+        return await query.CountAsync(cancellationToken);
+    }
+
     public async Task<Product?> GetProductByIdAsync(int id, CancellationToken cancellationToken)
         => await _context
             .Products

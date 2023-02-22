@@ -53,12 +53,8 @@ public class OptionsManagement : PageModel
 
     public async Task<IActionResult> OnGet(int productId, int optionNumber, CancellationToken cancellationToken)
     {
-        Product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
-
-        if (Product is null)
-        {
-            throw new NullReferenceException("Product does not exists");
-        }
+        var product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
+        Product = product ?? throw new NullReferenceException("Product does not exists");
 
         if (optionNumber < 1)
         {
@@ -72,12 +68,8 @@ public class OptionsManagement : PageModel
 
     public async Task<IActionResult> OnPostOptionAsync(CancellationToken cancellationToken)
     {
-        Product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
-
-        if (Product is null)
-        {
-            throw new NullReferenceException("Product does not exists");
-        }
+        var product = await _productRepository.GetProductByIdAsync(ProductId, cancellationToken);
+        Product = product ?? throw new NullReferenceException("Product does not exists");
         
         foreach (var data in OptionValues.Select((value, i) => new {i , value}))
         {

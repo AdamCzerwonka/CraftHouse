@@ -16,6 +16,25 @@
     }
 </aside>
 
+<aside>
+    @foreach (var sortValue in new[] { "Name", "Price" })
+    {
+        <a asp-page="/Index"
+           asp-route-pageNumber="1"
+           asp-route-category="@Model.CategoryId"
+           asp-route-order="@sortValue">
+            @sortValue
+        </a>
+        <a asp-page="/Index"
+           asp-route-pageNumber="1"
+           asp-route-category="@Model.CategoryId"
+           asp-route-order="@sortValue"
+           asp-route-isAscending="false">
+            @sortValue descending
+        </a>
+    }
+</aside>
+
 <div class="products">
     @foreach (var prod in Model.Products)
     {
@@ -33,7 +52,9 @@
     {
         <a asp-page="/Index"
            asp-route-pageNumber="@(Model.PageNumber - 1)"
-           asp-route-category="@Model.CategoryId">
+           asp-route-category="@Model.CategoryId"
+           asp-route-order="@Model.Order"
+           asp-route-isAscending="@Model.IsAscending">
             Prev Page
         </a>
     }
@@ -42,8 +63,10 @@
     {
         <a asp-page="/Index"
            asp-route-pageNumber="@(Model.PageNumber + 1)"
-           asp-route-category="@Model.CategoryId">
-            Prev Page
+           asp-route-category="@Model.CategoryId"
+           asp-route-order="@Model.Order"
+           asp-route-isAscending="@Model.IsAscending">
+            Next Page
         </a>
     }
 </div>
