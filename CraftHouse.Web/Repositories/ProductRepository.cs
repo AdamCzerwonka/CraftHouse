@@ -44,7 +44,7 @@ public class ProductRepository : IProductRepository
             ("name", true) => query.OrderBy(x => x.Name),
             ("price", true) => query.OrderBy(x => x.Price),
             ("name", false) => query.OrderByDescending(x => x.Name),
-            ("priceDesc", false) => query.OrderByDescending(x => x.Price),
+            ("price", false) => query.OrderByDescending(x => x.Price),
             _ => query.OrderBy(x => x.Id)
         };
 
