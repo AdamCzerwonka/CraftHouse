@@ -1,72 +1,126 @@
 ﻿@page "{pageNumber:int=1}"
+@using Microsoft.EntityFrameworkCore
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    ViewData["styles"] = "index";
 }
 
-<aside>
-    <a asp-page="/Index" asp-route-pageNumber="1">All</a>
-    @foreach (var category in Model.Categories)
-    {
-        <a asp-page="/Index"
-           asp-route-pageNumber="1"
-           asp-route-category="@category.Id">
-            @category.Name
-        </a>
-    }
-</aside>
+<div class="container">
+    <aside class="nav">
+        @if (Model.Products.Count > 1)
+        {
+            <p class="nav__header">Sort by</p>
+            @foreach (var sortValue in new[] { "name", "price" })
+            {
+                if (Model.Order != null && Model.Order.Equals(sortValue) && Model.IsAscending != false)
+                {
+                    <a class="nav__order nav__order--chosen" asp-page="/Index"
+                       asp-route-pageNumber="1"
+                       asp-route-category="@Model.CategoryId"
+                       asp-route-order="@sortValue">
+                        @sortValue
+                    </a>
+                }
+                else
+                {
+                    <a class="nav__order" asp-page="/Index"
+                       asp-route-pageNumber="1"
+                       asp-route-category="@Model.CategoryId"
+                       asp-route-order="@sortValue">
+                        @sortValue
+                    </a>
+                }
+                if (Model.Order != null && Model.Order.Equals(sortValue) && Model.IsAscending == false)
+                {
+                    <a class="nav__order nav__order--chosen" asp-page="/Index"
+                       asp-route-pageNumber="1"
+                       asp-route-category="@Model.CategoryId"
+                       asp-route-order="@sortValue"
+                       asp-route-isAscending="false">
+                        @sortValue descending
+                    </a>
+                }
+                else
+                {
+                    <a class="nav__order" asp-page="/Index"
+                       asp-route-pageNumber="1"
+                       asp-route-category="@Model.CategoryId"
+                       asp-route-order="@sortValue"
+                       asp-route-isAscending="false">
+                        @sortValue descending
+                    </a>
+                }
+            }
+        }
+        
+        <p class="nav__header">Categories</p>
+        @if (Model.CategoryId == null)
+        {
+            <a class="nav__category nav__category--chosen" asp-page="/Index" asp-route-pageNumber="1">All</a>
+        }
+        else
+        {
+            <a class="nav__category" asp-page="/Index" asp-route-pageNumber="1">All</a>
+        }
+        @foreach (var category in Model.Categories)
+        {
+            if (Model.CategoryId == category.Id)
+            {
+                <a class="nav__category nav__category--chosen" asp-page="/Index"
+                   asp-route-pageNumber="1"
+                   asp-route-category="@category.Id">
+                    @category.Name
+                </a>
+            }
+            else
+            {
+                <a class="nav__category" asp-page="/Index"
+                   asp-route-pageNumber="1"
+                   asp-route-category="@category.Id">
+                    @category.Name
+                </a>
+            }
+        }
+    </aside>
 
-<aside>
-    @foreach (var sortValue in new[] { "Name", "Price" })
-    {
-        <a asp-page="/Index"
-           asp-route-pageNumber="1"
-           asp-route-category="@Model.CategoryId"
-           asp-route-order="@sortValue">
-            @sortValue
-        </a>
-        <a asp-page="/Index"
-           asp-route-pageNumber="1"
-           asp-route-category="@Model.CategoryId"
-           asp-route-order="@sortValue"
-           asp-route-isAscending="false">
-            @sortValue descending
-        </a>
-    }
-</aside>
-
-<div class="products">
-    @foreach (var prod in Model.Products)
-    {
-        <div class="products__product">
-            <img class="product__photo" src="~/photos/pexels-irina-varanovich-14686152.jpg" alt="Product image"/>
-            <p class="product__name">@prod.Name</p>
-            <p>@prod.Description</p>
-            <p>@prod.Price</p>
-            <a asp-page="/Cart/Add" asp-route-productId="@prod.Id">Add to cart</a>
-        </div>
-    }
-</div>
-<div class="products__pagination">
-    @if (Model.PageNumber != 1)
-    {
-        <a asp-page="/Index"
-           asp-route-pageNumber="@(Model.PageNumber - 1)"
-           asp-route-category="@Model.CategoryId"
-           asp-route-order="@Model.Order"
-           asp-route-isAscending="@Model.IsAscending">
-            Prev Page
-        </a>
-    }
-    <span>@Model.PageNumber</span>
-    @if ((int)Model.ViewData["lastPageNumber"]! != Model.PageNumber)
-    {
-        <a asp-page="/Index"
-           asp-route-pageNumber="@(Model.PageNumber + 1)"
-           asp-route-category="@Model.CategoryId"
-           asp-route-order="@Model.Order"
-           asp-route-isAscending="@Model.IsAscending">
-            Next Page
-        </a>
-    }
+    <div class="products">
+        @foreach (var prod in Model.Products)
+        {
+            <div class="products__product product">
+                <img class="product__photo" src="~/photos/pexels-irina-varanovich-14686152.jpg" alt="Product image"/>
+                <div class="product__block-main">
+                    <p class="product__name">@prod.Name</p>
+                    <p class="product__description">@prod.Description</p>
+                </div>
+                <div class="product__block-add">
+                    <a class="product__button button button--red" asp-page="/Cart/Add" asp-route-productId="@prod.Id">Add to cart</a>
+                    <p class="product__price">@prod.Price</p>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="products__pagination">
+        @if (Model.PageNumber != 1)
+        {
+            <a asp-page="/Index"
+               asp-route-pageNumber="@(Model.PageNumber - 1)"
+               asp-route-category="@Model.CategoryId"
+               asp-route-order="@Model.Order"
+               asp-route-isAscending="@Model.IsAscending">
+                Prev Page
+            </a>
+        }
+        <span>@Model.PageNumber</span>
+        @if ((int)Model.ViewData["lastPageNumber"]! != Model.PageNumber)
+        {
+            <a asp-page="/Index"
+               asp-route-pageNumber="@(Model.PageNumber + 1)"
+               asp-route-category="@Model.CategoryId"
+               asp-route-order="@Model.Order"
+               asp-route-isAscending="@Model.IsAscending">
+                Next Page
+            </a>
+        }
+    </div>
 </div>
