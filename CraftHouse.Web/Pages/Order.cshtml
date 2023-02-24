@@ -1,7 +1,45 @@
 ﻿@page
+@using System.Globalization
 @model CraftHouse.Web.Pages.OrderModel
+@{
+    ViewData["title"] = "Order";
+    ViewData["styles"] = "order";
+}
 
-<form method="post">
-   <h2>Add some fileds here</h2> 
-   <input type="submit" value="Place Order"/>
-</form>
+<div class="order-grid">
+    <div class="order__header">
+        <h1>Finish placing order</h1>
+    </div>
+    <div class="order__form">
+        <h2 class="order__h2">Shipping information</h2>
+        <form class="form" method="post">
+            <label asp-for="CreateOrder.AddressLine">Address line</label>
+            <input class="form--red" type="text" asp-for="CreateOrder.AddressLine" value="@Model.UserData.AddressLine"/>
+            <label asp-for="CreateOrder.City">City</label>
+            <input class="form--red" type="text" asp-for="CreateOrder.City" value="@Model.UserData.City"/>
+            <label asp-for="CreateOrder.Postal">Postal code</label>
+            <input class="form--red" type="text" asp-for="CreateOrder.Postal" value="@Model.UserData.PostalCode"/>
+            <label asp-for="CreateOrder.Telephone">Telephone</label>
+            <input class="form--red" type="text" asp-for="CreateOrder.Telephone" value="@Model.UserData.TelephoneNumber"/>
+            <label asp-for="CreateOrder.Comment">Add a comment to your order</label>
+            <textarea asp-for="CreateOrder.Comment" class="form--red"></textarea>
+            <input class="button button--red form--red" type="submit" value="Place Order"/>
+        </form>
+    </div>
+    <div class="order__summary">
+        <h2 class="order__h2">Summary</h2>
+        <div class="summary__line">
+            <div>Order value:</div>
+            <div>@Model.CartValue.ToString("c2")</div>
+        </div>
+        <div class="summary__line">
+            <div>Shipping cost:</div>
+            <div>@Model.ShippingCost.ToString("c2")</div>
+        </div>
+        <div class="summary__spacer"></div>
+        <div class="summary__line">
+            <div>Total cost:</div>
+            <div>@Model.OrderValue.ToString("c2")</div>
+        </div>
+    </div>
+</div>

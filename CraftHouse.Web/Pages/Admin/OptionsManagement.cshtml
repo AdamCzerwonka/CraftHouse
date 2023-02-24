@@ -59,7 +59,7 @@
     <th class="table--center">Actions</th>
     </thead>
     <tbody>
-    @foreach (var option in @Model.ExistingOptions)
+    @foreach (var option in Model.ExistingOptions)
     {
         <tr>
             <td>@option.Id</td>
@@ -68,7 +68,7 @@
             <td class="table--flex">
                 <a class="button" asp-page="/admin/OptionValuesManagement" asp-route-optionId="@option.Id">Edit</a>
                 <form method="post" asp-page-handler="Remove">
-                    <input type="hidden" value="@option.Id" asp-for="OptionId"/>
+                    <input type="hidden" value="@option.Id" asp-for="DeleteOptionModel.Id"/>
                     <input class="button button--red" type="submit" value="Delete"/>
                 </form>
             </td>

@@ -10,6 +10,10 @@
     {
         <link rel="stylesheet" href="~/css/@(ViewData["styles"]).css"/>
     }
+    @if (ViewData.ContainsKey("script"))
+    {
+        <script src="~/js/@(ViewData["script"]).js" defer></script>
+    }
 </head>
 <body>
 @if (!ViewData.ContainsKey("no_render_nav"))

@@ -59,6 +59,15 @@ public class OptionRepository : IOptionRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<List<Option>> GetOptionsWithOptionValuesByProductIdAsync(int productId, CancellationToken cancellationToken)
+        => await _context
+            .Options
+            .Include(x => x.OptionValues)
+            .AsNoTracking()
+            .Where(x => x.DeletedAt == null)
+            .Where(x => x.ProductId == productId)
+            .ToListAsync(cancellationToken);
+
     public async Task DeleteOptionAsync(Option option, CancellationToken cancellationToken)
     {
         option.UpdatedAt = DateTime.Now;

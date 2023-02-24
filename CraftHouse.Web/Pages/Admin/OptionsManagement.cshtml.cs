@@ -15,22 +15,25 @@ public class OptionsManagement : PageModel
     private readonly IProductRepository _productRepository;
     private readonly IValidator<Option> _optionValidator;
     private readonly IValidator<OptionValue> _optionValueValidator;
+    private readonly ILogger<OptionsManagement> _logger;
 
     public OptionsManagement(IOptionRepository optionRepository, IProductRepository productRepository,
-        IValidator<Option> optionValidator, IValidator<OptionValue> optionValueValidator)
+        IValidator<Option> optionValidator, IValidator<OptionValue> optionValueValidator,
+        ILogger<OptionsManagement> logger)
     {
         _optionRepository = optionRepository;
         _productRepository = productRepository;
         _optionValidator = optionValidator;
         _optionValueValidator = optionValueValidator;
+        _logger = logger;
     }
 
     [BindProperty]
     public string Name { get; set; } = null!;
-    
+
     [BindProperty]
     public int OptionId { get; set; }
-    
+
     [BindProperty]
     public int ProductId { get; set; }
 
@@ -46,7 +49,7 @@ public class OptionsManagement : PageModel
     public List<Option> ExistingOptions { get; set; } = null!;
 
     public int OptionNumber { get; set; }
-    
+
     public List<string>? Errors { get; set; }
 
     public Product Product { get; set; } = null!;
@@ -56,10 +59,7 @@ public class OptionsManagement : PageModel
         var product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
         Product = product ?? throw new NullReferenceException("Product does not exists");
 
-        if (optionNumber < 1)
-        {
-            return Redirect($"/admin/OptionsManagement/{Product.Id}?optionNumber={1}");
-        }
+        optionNumber = optionNumber < 1 ? 1 : optionNumber;
 
         OptionNumber = optionNumber;
         ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(Product.Id, cancellationToken);
@@ -114,18 +114,22 @@ public class OptionsManagement : PageModel
         return Redirect($"/admin/OptionsManagement/{Product.Id}?optionNumber={1}");
     }
 
+    [BindProperty]
+    public DeleteOptionModel DeleteOptionModel { get; set; } = null!;
+
     public async Task<IActionResult> OnPostRemoveAsync(CancellationToken cancellationToken)
     {
-        ExistingOptions = await _optionRepository.GetOptionsByProductIdAsync(Product.Id, cancellationToken);
-
-        foreach (var option in ExistingOptions)
+        var option = await _optionRepository.GetOptionByIdAsync(DeleteOptionModel.Id, cancellationToken);
+        if (option is null)
         {
-            var isDeleted = await _optionRepository.IsOptionDeletedAsync(option, cancellationToken);
-            if (option.Id != OptionId || isDeleted) continue;
-            await _optionRepository.DeleteOptionAsync(option, cancellationToken);
-            break;
+            _logger.LogWarning("Trying to delete non existing option with option Id: {@optionID}", DeleteOptionModel.Id);
+            throw new NullReferenceException("Option not found");
         }
 
-        return Redirect($"/admin/OptionsManagement/{Product.Id}?optionNumber={1}");
+        await _optionRepository.DeleteOptionAsync(option, cancellationToken);
+
+        return Redirect($"/admin/OptionsManagement/{ProductId}?optionNumber={1}");
     }
 }
+
+public record DeleteOptionModel(int Id);

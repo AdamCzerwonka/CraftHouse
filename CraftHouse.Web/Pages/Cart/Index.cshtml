@@ -1,29 +1,46 @@
 ﻿@page
 @model CraftHouse.Web.Pages.Cart.Index
+@{
+    ViewData["styles"] = "cart";
+    ViewData["title"] = "Cart";
+}
 
 <h1>Cart</h1>
 <h2>Sum: @Model.CartPrice</h2>
 
-@foreach (var entry in Model.CartEntries)
-{
-    <p>@entry.Name</p>
-    <p>@entry.BasePrice</p>
-    @foreach (var opt in entry.Options)
+<div class="cart__entries">
+    @foreach (var entry in Model.CartEntries)
     {
-        <p>@opt.Name</p>
-        @foreach (var value in opt.Values)
-        {
-            <p>@value.Name - @value.Price</p>
-        }
-    }
+        <div class="cart__entry">
+            <div class="cart__left">
+                <p class="entry__title">
+                    <strong>@entry.Name</strong>
+                    @(entry.Options.Count == 0 ? "" : $" - {entry.BasePrice:c2}")
+                </p>
+                <ul class="entry__options">
+                    @foreach (var opt in entry.Options)
+                    {
+                        <li>
+                            @opt.Name
+                            <ul>
+                                @foreach (var value in opt.Values)
+                                {
+                                    <li>@value.Name - @value.Price.ToString("c2")</li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
 
-    <p>Price: @entry.TotalPrice</p>
-    <form method="post" asp-page-handler="delete">
-        <input type="hidden" value="@entry.EntryId" asp-for="DeleteEntry.EntryId"/> 
-        <input type="submit" value="Delete"/>
-    </form>
-    <hr/>
-}
+                <p>Price: @entry.TotalPrice</p>
+            </div>
+            <form class="entry__remove" method="post" asp-page-handler="delete">
+                <input type="hidden" value="@entry.EntryId" asp-for="DeleteEntry.EntryId"/>
+                <button>Remove</button>
+            </form>
+        </div>
+    }
+</div>
 
 <br/>
 <br/>

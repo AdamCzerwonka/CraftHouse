@@ -12,4 +12,5 @@ public interface IOptionRepository
     Task<List<Option>> GetOptionsByProductIdAsync(int productId, CancellationToken cancellationToken);
     Task<bool> IsOptionDeletedAsync(Option option, CancellationToken cancellationToken);
     Task UpdateOptionAsync(Option option, CancellationToken cancellationToken);
+    Task<List<Option>> GetOptionsWithOptionValuesByProductIdAsync(int productId, CancellationToken cancellationToken);
 }

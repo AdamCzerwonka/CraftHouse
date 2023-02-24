@@ -8,7 +8,7 @@ public class OptionValueValidator : AbstractValidator<OptionValue>
     public OptionValueValidator()
     {
         RuleFor(optionValue => optionValue.Value).NotEmpty().MinimumLength(3);
-        RuleFor(optionValue => optionValue.Price).NotEmpty().Must(ValidationMethods.IsPriceValid);
+        RuleFor(optionValue => optionValue.Price).GreaterThanOrEqualTo(0);
         RuleFor(optionValue => optionValue.OptionId).NotEmpty().GreaterThan(0);
         
     }
