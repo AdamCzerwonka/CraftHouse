@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography.Xml;
-using CraftHouse.Web.Data;
+﻿using CraftHouse.Web.Data;
 using CraftHouse.Web.Entities;
 using CraftHouse.Web.Models;
 using CraftHouse.Web.Repositories;
@@ -7,23 +6,22 @@ using CraftHouse.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.ObjectPool;
 
 namespace CraftHouse.Web.Pages.Cart;
 
 public class Add : PageModel
 {
     private readonly IProductRepository _productRepository;
+    private readonly IOptionRepository _optionRepository;
     private readonly ICartService _cartService;
-    private readonly AppDbContext _context;
     private readonly ILogger<Add> _logger;
 
-    public Add(AppDbContext context, ILogger<Add> logger, IProductRepository productRepository,
-        ICartService cartService)
+    public Add(ILogger<Add> logger, IProductRepository productRepository,
+        ICartService cartService, IOptionRepository optionRepository)
     {
         _productRepository = productRepository;
         _cartService = cartService;
-        _context = context;
+        _optionRepository = optionRepository;
         _logger = logger;
     }
 
@@ -31,20 +29,32 @@ public class Add : PageModel
 
     public List<Option> Options { get; set; } = null!;
 
-    public async Task OnGetAsync(int productId, CancellationToken cancellationToken)
+    public async Task<IActionResult> OnGetAsync(int productId, CancellationToken cancellationToken)
     {
-        var product = await _context
-            .Products
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == productId && x.DeletedAt == null, cancellationToken);
+        var product = await _productRepository.GetProductByIdAsync(productId, cancellationToken);
+        if (product is null)
+        {
+            return NotFound();
+        }
 
-        Options = await _context
-            .Options
-            .Include(x => x.OptionValues)
-            .Where(x => x.ProductId == product!.Id)
-            .ToListAsync(cancellationToken);
+        Options = await _optionRepository
+            .GetOptionsWithOptionValuesByProductIdAsync(productId, cancellationToken);
 
-        Product = product ?? throw new InvalidOperationException("Product not found");
+        Product = product;
+
+        if (Options.Count != 0)
+        {
+            return Page();
+        }
+
+        var cartEntry = new CartEntry
+        {
+            ProductId = Product.Id
+        };
+
+        _cartService.AddCartEntry(cartEntry);
+
+        return Redirect("/cart");
     }
 
     [BindProperty]
@@ -61,15 +71,9 @@ public class Add : PageModel
         }
 
         // validate option list
-        var optionsInDb = await _context
-            .Options
-            .Include(x => x.OptionValues)
-            .AsNoTracking()
-            .Where(x => x.ProductId == CartProduct.ProductId && x.DeletedAt == null)
-            .ToListAsync(cancellationToken);
+        var optionsInDb =
+            await _optionRepository.GetOptionsWithOptionValuesByProductIdAsync(product.Id, cancellationToken);
 
-
-        var anyOptionRequired = optionsInDb.Any(x => x.Required);
         if (optionsInDb.Count == 0)
         {
             var cartEntry = new CartEntry()
@@ -148,6 +152,7 @@ public class AddToCartModel
 public class AddToCartOptionModel
 {
     public int OptionId { get; init; }
+
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     // ReSharper disable once CollectionNeverUpdated.Global
     public List<int> Values { get; init; } = new();

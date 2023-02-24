@@ -1,31 +1,79 @@
 ﻿@page "{productId:int}"
 @model CraftHouse.Web.Pages.Cart.Add
+@{
+    ViewData["styles"] = "addToCart";
+    ViewData["title"] = $"Add {Model.Product.Name} to cart";
+    ViewData["script"] = "addToCart";
+}
 
-<h1>Add @Model.Product.Id</h1>
+<div class="container">
+    <h1 class="grid__title">Choose options for this product</h1>
+    <div class="grid__left">
+        <form method="post" id="addToCartForm">
+            <input type="hidden" value="@Model.Product.Id" asp-for="CartProduct.ProductId"/>
+            @for (var i = 0; i < Model.Options.Count; i++)
+            {
+                var option = Model.Options[i];
+                var index = i;
+                <input type="hidden" value="@option.Id" asp-for="CartProduct.Options[index].OptionId"/>
+                <h3>
+                    @if (option.Required)
+                    {
+                        @option.Name<span class="option__required">*</span>
+                    }
+                    else
+                    {
+                        @option.Name
+                    }
+                </h3>
+                <p>Choose up to: @option.MaxOccurs</p>
 
-<p>@Model.Product.Name</p>
-<p>@Model.Product.Price</p>
+                foreach (var value in option.OptionValues)
+                {
+                    <div data-id="@value.Id"
+                         data-option-id="@option.Id"
+                         data-max-occurs="@option.MaxOccurs"
+                         data-price="@value.Price"
+                         data-checked="false"
+                         class="product__option">
+                        <span>@value.Value</span>
+                        <span class="option__price">+@value.Price.ToString("c2")</span>
+                        <img class="option__checkmark hidden" src="~/photos/check-solid.svg" alt="checkmark picture"/>
+                    </div>
+                    <label>
+                        <input class="option__checkbox" type="checkbox" value="@value.Id" Name="CartProduct.Options[@index].Values"/>
+                    </label>
+                }
+            }
 
-<h2>Options</h2>
-<form method="post">
-    <input type="hidden" value="@Model.Product.Id" asp-for="CartProduct.ProductId"/>
-    @for (var i = 0; i < Model.Options.Count; i++)
-    {
-        var option = Model.Options[i];
-        var index = i;
-        <input type="hidden" value="@option.Id" asp-for="CartProduct.Options[index].OptionId"/>
-        <h3>@option.Name</h3>
-        <p>Pick: @option.MaxOccurs</p>
-        <p>Required: @option.Required</p>
-                                                  
-        foreach (var value in option.OptionValues)
-        {
-            <label>
-                @value.Value
-                <input type="checkbox" value="@value.Id" Name="CartProduct.Options[@index].Values"/>
-            </label>
-        }
-    }
+            <input type="submit" value="Add"/>
+        </form>
+    </div>
 
-    <input type="submit" value="Add"/>
-</form>
+    <div class="grid__right">
+        <div>
+
+            <img class="product__photo" src="~/photos/pexels-irina-varanovich-14686152.jpg" alt="placeholder picture"/>
+
+            <p class="product__title">@Model.Product.Name</p>
+            <p class="product__price" data-price="@Model.Product.Price">
+                @Model.Product.Price.ToString("c2")
+            </p>
+        </div>
+    </div>
+    <div class="grid__bottom">
+        <p class="total__price">
+            <span class="total__price__text">
+                Total price:
+            </span>
+            <span class="total__price__value">
+                @Model.Product.Price.ToString("c2")
+            </span>
+        </p>
+        <button id="addToCartButton" class="form__submit">
+            <span>Add to cart</span>
+            <img class="icon" src="~/photos/basket-shopping-solid.svg" alt="shopping basket"/>
+        </button>
+    </div>
+    <p><span class="option__required">*</span> - Option is required, you must select at least one option.</p>
+</div>
