@@ -1,0 +1,132 @@
+@import 'variables';
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    color: $main-black;
+    user-select: none;
+
+    .nav {
+        flex-basis: 15%;
+        display: flex;
+        flex-direction: column;
+        margin-right: 15px;
+
+        &__header {
+            margin-top: 20px;
+            color: $main-black;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        &__order,
+        &__category {
+            color: $main-black;
+            text-decoration: none;
+            border-right: 3px solid $main-black;
+            padding-right: 15px;
+            transition: ease-in-out .2s;
+            font-weight: 700;
+            font-size: 1.3rem;
+            padding: 5px 0 0 0;
+
+            &:visited {
+                color: $main-black;
+            }
+
+            &:hover {
+                color: $main-red;
+                border-color: $main-red;
+            }
+
+            &--chosen {
+                color: $main-red !important;
+                border-color: $main-red !important;
+
+                &:hover {
+                    color: darken($main-red, 30) !important;
+                    border-color: darken($main-red, 30) !important;
+                }
+            }
+        }
+
+        &__order {}
+
+        &__category {}
+    }
+
+    .products {
+        flex-basis: 80%;
+
+        &__product {
+            margin-bottom: 15px;
+        }
+
+        &__pagination {
+            flex-basis: 100%;
+        }
+    }
+
+    .product {
+        display: flex;
+        background-color: #ffffff;
+        //border-bottom: 3px solid $main-teal;
+        border-radius: 7px;
+        overflow: hidden;
+        transition: ease-in-out .2s;
+
+        &__photo {
+            width: 250px;
+            object-fit: cover;
+            aspect-ratio: 4 / 3;
+            grid-area: photo;
+            justify-self: center;
+            border-left: 5px solid $main-red;
+            border-radius: 7px 0 0 7px;
+        }
+
+        &__name {
+            font-weight: 700;
+            margin-left: 15px;
+            font-size: 1.3rem;
+            border-bottom: 3px solid $main-blue;
+            padding: 10px;
+        }
+
+        &__description {
+            margin-left: 15px;
+            font-size: 1.1rem;
+            padding: 10px;
+        }
+
+        &__block-main {
+            width: 100%;
+        }
+
+        &__block-add {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            margin: 5px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &__price {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+        &__button {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+    }
+}
