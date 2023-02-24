@@ -1,0 +1,40 @@
+@import "variables";
+
+.cart__entries {
+  display: flex;
+  flex-direction: column;
+
+  .cart__entry {
+    border: 3px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .entry__title {
+      font-size: 1.2rem;
+    }
+
+    ul {
+        padding-left: 20px;
+    }
+
+    .entry__remove {
+        margin-left: auto;
+
+      button {
+        background: $main-red;
+        border: none;
+        border-radius: 10px;
+        padding: 10px;
+      }
+    }
+
+    .cart__left {
+        display: flex;
+        flex-direction: column;
+    }
+  }
+}
