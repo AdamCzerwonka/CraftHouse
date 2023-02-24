@@ -1,0 +1,110 @@
+﻿@page
+@model CraftHouse.Web.Pages.Admin.Orders
+
+@{
+    ViewData["title"] = "Orders";
+    ViewData["styles"] = "orders";
+}
+
+<div class="users">
+@foreach (var user in @Model.Users)
+{
+    <a class="button" asp-page="/Admin/Orders" asp-route-userId="@user.Id" asp-route-orderBy="@Model.OrderBy"
+       asp-route-isascending="@Model.IsAscending">
+        ID @user.Id: @user.FirstName @user.LastName
+    </a>
+    <br/>
+}
+</div>
+
+<table class="table">
+    <thead>
+    <th class="table--center">
+        @if (@Model.OrderBy == "id")
+        {
+            if (@Model.IsAscending == true)
+            {
+                <img class="arrow__ascending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+            else
+            {
+                <img class="arrow__descending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+        }
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="id" asp-route-isascending="@(!Model.IsAscending)">ID</a>
+    </th>
+    <th class="table--center">
+        @if (@Model.OrderBy == "userid")
+        {
+            if (@Model.IsAscending == true)
+            {
+                <img class="arrow__ascending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+            else
+            {
+                <img class="arrow__descending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+        }
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="userid" asp-route-isascending="@(!Model.IsAscending)">User ID</a>
+    </th>
+    <th>
+        @if (@Model.OrderBy == "price")
+        {
+            if (@Model.IsAscending == true)
+            {
+                <img class="arrow__ascending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+            else
+            {
+                <img class="arrow__descending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+        }
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="price" asp-route-isascending="@(!Model.IsAscending)">Price</a>
+    </th>
+    <th>
+        @if (@Model.OrderBy == "status")
+        {
+            if (@Model.IsAscending == true)
+            {
+                <img class="arrow__ascending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+            else
+            {
+                <img class="arrow__descending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+        }
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="status" asp-route-isascending="@(!Model.IsAscending)">Status</a>
+    </th>
+    <th>
+        @if (@Model.OrderBy == "order date")
+        {
+            if (@Model.IsAscending == true)
+            {
+                <img class="arrow__ascending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+            else
+            {
+                <img class="arrow__descending" src="~/photos/arrow-left-solid.svg" alt="arrow"/>
+            }
+        }
+        <a asp-page="/Admin/Orders" asp-route-userId="@Model.UserId" asp-route-orderBy="order date" asp-route-isascending="@(!Model.IsAscending)">Order date</a>
+    </th>
+    <th class="table--center">Actions</th>
+    </thead>
+    <tbody>
+    @foreach (var order in @Model.OrdersList)
+    {
+        <tr>
+            <td class="table--center">@order.Id</td>
+            <td class="table--center">@order.UserId</td>
+            <td>@order.Value</td>
+            <td>@order.OrderStatus</td>
+            <td>@order.CreatedAt</td>
+            <td class="table--flex">
+                <a class="button" asp-page="/OrderDetails" asp-route-orderId="@order.Id">Show details</a>
+                <a class="button" asp-page="/Admin/OrderManagement" asp-route-orderId="@order.Id">Edit</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

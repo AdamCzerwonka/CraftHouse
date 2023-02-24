@@ -20,6 +20,15 @@
         background-color: $main-teal;
         color: $main-black;
         user-select: none;
+
+        a {
+            color: $main-black;
+            text-decoration: underline;
+
+            &:visited {
+                color: $main-black;
+            }
+        }
     }
 
     tbody tr {
@@ -41,6 +50,14 @@
         background-color: none;
         border-bottom: 2px solid $main-red;
         border-radius: 3px;
+    }
+
+    .table--light_red_background {
+        background-color: lighten($main-red, 10) !important;
+    }
+
+    .table--light_blue_background {
+        background-color: lighten($main-blue, 10) !important;
     }
 
     .table--center {

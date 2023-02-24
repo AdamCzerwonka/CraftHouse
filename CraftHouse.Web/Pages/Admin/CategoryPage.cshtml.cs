@@ -23,19 +23,20 @@ public class CategoryPage : PageModel
         _validator = validator;
     }
 
-    public Category? Category { get; set; }
+    public Category Category { get; set; } = null!;
 
     [BindProperty]
     public CategoryDeleteModel CategoryDelete { get; set; } = null!;
 
     [BindProperty]
     public CategoryUpdateModel CategoryUpdate { get; set; } = null!;
-    
+
     public string? Error { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int id, CancellationToken cancellationToken)
     {
-        Category = await _categoryRepository.GetCategoryWithProducts(id, cancellationToken);
+        var category = await _categoryRepository.GetCategoryWithProducts(id, cancellationToken);
+        Category = category ?? throw new NullReferenceException("Category does not exits");
 
         if (Category is null)
         {
@@ -75,7 +76,7 @@ public class CategoryPage : PageModel
 
         var isCategoryNameTaken = await _categoryRepository
             .CategoryExistsAsync(CategoryUpdate.Name, cancellationToken);
-        
+
         if (isCategoryNameTaken)
         {
             throw new InvalidOperationException("Category name is taken");
@@ -91,11 +92,13 @@ public class CategoryPage : PageModel
         if (!validationResult.IsValid)
         {
             Error = validationResult.Errors.First().ToString();
-            Category = await _categoryRepository.GetCategoryWithProducts(category.Id, cancellationToken);
+            var cat = await _categoryRepository.GetCategoryWithProducts(category.Id, cancellationToken);
+            Category = cat ?? throw new NullReferenceException("Category does not exists");
             return Page();
         }
+
         category.Name = CategoryUpdate.Name;
-        
+
         await _categoryRepository.UpdateCategoryAsync(category, cancellationToken);
 
         return Redirect("/admin/category/" + category.Id);

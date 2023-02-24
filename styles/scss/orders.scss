@@ -1,0 +1,12 @@
+@import 'table';
+@import 'form';
+
+
+.users {
+    display: flex;
+    flex-wrap: wrap;
+
+    a {
+        margin: 5px;
+    }
+}
