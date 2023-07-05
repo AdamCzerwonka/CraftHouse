@@ -22,4 +22,4 @@ docker compose up -d
 ```
 dotnet run
 ```
-After this you can check the app with https://localhost:7280/
+After this you can check the app with https://localhost:7280.
