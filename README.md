@@ -9,6 +9,7 @@ CraftHouse is an app build for a restaurant. It's main target is to allow custom
 
 
 ## How to run
+To run this app you need docker and .NET with .NET 7 sdk installed.
 1. Clone the repository
 ```
 git clone https://github.com/AdamCzerwonka/CraftHouse
@@ -21,3 +22,4 @@ docker compose up -d
 ```
 dotnet run
 ```
+After this you can check the app with https://localhost:7280/
