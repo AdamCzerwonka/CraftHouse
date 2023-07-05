@@ -1,5 +1,5 @@
 # CraftHouse
-CraftHouse is an app build for a restaurant. It's main target is to allow customers to browse through the menu. Application has an session based auth system. In order to place an order customer need to create an account. Application implements basic roles to distinguish customers from stuff. From the perspctive of privilidged user we can modify products (add/update/delete), process orders and view all accounts.
+CraftHouse is an app build for a restaurant. Its main target is to allow customers to browse through the menu. The application has a session based auth system. In order to place an order, the customer needs to create an account. The application implements basic rules to distinguish the customers from stuff. From the perspective of privileged user, we can modify products (add/update/delete), process orders and view all accounts.
 
 ## Technologies Used
 - Razor pages
